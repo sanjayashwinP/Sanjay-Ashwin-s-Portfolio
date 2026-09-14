@@ -15,24 +15,31 @@ export default function Hero({ profile }) {
     <section className="hero-section" id="hero">
       <div className="container hero-container">
         <div className="hero-content">
-          {/* Developer Profile Header with Optional Avatar */}
+          {/* Developer Profile Header with Medium Attractive Avatar */}
           <div className="hero-profile-row">
-            {avatarUrl ? (
-              <div className="hero-avatar-frame">
-                <img src={avatarUrl} alt={name} className="hero-avatar-img" />
-                <span className="hero-avatar-status" title="Active & Ready"></span>
-              </div>
-            ) : (
-              <div className="hero-avatar-placeholder">
-                <span className="hero-avatar-initials">SA</span>
-                <span className="hero-avatar-status" title="Active & Ready"></span>
-              </div>
-            )}
+            <div className="hero-avatar-wrapper">
+              {avatarUrl ? (
+                <div className="hero-avatar-frame">
+                  <img src={avatarUrl} alt={name} className="hero-avatar-img" />
+                  <span className="hero-avatar-status" title="Active & Ready for Opportunities"></span>
+                </div>
+              ) : (
+                <div className="hero-avatar-placeholder">
+                  <span className="hero-avatar-initials">SA</span>
+                  <span className="hero-avatar-status" title="Active & Ready for Opportunities"></span>
+                </div>
+              )}
+            </div>
 
-            {/* Status Pill Badge */}
-            <div className="hero-badge">
-              <span className="status-dot"></span>
-              <span className="badge-text">Available for SDE Roles & Internships</span>
+            <div className="hero-profile-meta">
+              <div className="hero-badge">
+                <span className="status-dot"></span>
+                <span className="badge-text">Available for SDE Roles & Internships</span>
+              </div>
+              <div className="hero-meta-details">
+                <span className="hero-meta-college font-mono">Saveetha Engineering College • CGPA 8.4</span>
+                <span className="hero-meta-loc font-mono">📍 {profile?.location || 'Chennai, India'}</span>
+              </div>
             </div>
           </div>
 

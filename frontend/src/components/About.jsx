@@ -20,11 +20,17 @@ export default function About({ profile }) {
           {/* Narrative description & Metrics */}
           <div className="about-story">
             {avatarUrl && (
-              <div className="about-avatar-preview">
-                <img src={avatarUrl} alt={profile?.name || 'Sanjay Ashwin'} className="about-avatar-img" />
+              <div className="about-avatar-preview card">
+                <div className="about-avatar-img-wrap">
+                  <img src={avatarUrl} alt={profile?.name || 'Sanjay Ashwin'} className="about-avatar-img" />
+                </div>
                 <div className="about-avatar-caption">
-                  <span className="font-mono text-code">{profile?.name || 'Sanjay Ashwin'}</span>
+                  <div className="about-avatar-header">
+                    <h3 className="about-avatar-name">{profile?.name || 'Sanjay Ashwin'}</h3>
+                    <span className="badge badge-accent font-mono">CGPA {cgpa}</span>
+                  </div>
                   <span className="avatar-role-text">{profile?.title || 'Java & Full-Stack Developer'}</span>
+                  <span className="avatar-college-text font-mono">Saveetha Engineering College (2023–2027)</span>
                 </div>
               </div>
             )}

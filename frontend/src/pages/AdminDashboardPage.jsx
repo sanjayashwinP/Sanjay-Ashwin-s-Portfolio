@@ -256,11 +256,27 @@ export default function AdminDashboardPage({ onNavigate }) {
   const handleOpenExperienceForm = (exp = null) => {
     if (exp) {
       setEditingExperience(exp);
-      setExperienceForm({ ...exp });
+      setExperienceForm({
+        company: exp.company || '',
+        role: exp.role || '',
+        location: exp.location || '',
+        startDate: exp.startDate || '',
+        endDate: exp.endDate || '',
+        isCurrent: exp.isCurrent || false,
+        description: exp.description || '',
+        technologies: exp.technologies || ''
+      });
     } else {
       setEditingExperience('new');
       setExperienceForm({
-        company: '', role: '', location: 'Chennai, India', startDate: '', endDate: '', isCurrent: false, description: '', technologies: ''
+        company: '',
+        role: '',
+        location: 'Chennai, India',
+        startDate: '',
+        endDate: '',
+        isCurrent: false,
+        description: '',
+        technologies: ''
       });
     }
   };
@@ -1129,6 +1145,15 @@ export default function AdminDashboardPage({ onNavigate }) {
                           required
                           value={experienceForm.role}
                           onChange={e => setExperienceForm({ ...experienceForm, role: e.target.value })}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Location</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Chennai, India (or Remote)"
+                          value={experienceForm.location || ''}
+                          onChange={e => setExperienceForm({ ...experienceForm, location: e.target.value })}
                         />
                       </div>
                       <div className="form-group">
