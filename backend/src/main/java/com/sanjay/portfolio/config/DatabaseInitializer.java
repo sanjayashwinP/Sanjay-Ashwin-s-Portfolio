@@ -81,7 +81,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     private void seedProfile() {
         if (profileRepository.count() == 0) {
             Profile profile = new Profile();
-            profile.setName("Sanjay Ashwin");
+            profile.setName("Sanjay Ashwin P");
             profile.setTitle("Java & Full-Stack Developer");
             profile.setBio("Computer Science and Engineering undergraduate with strong knowledge in Java, Spring Boot, Spring Security, and full-stack web development. Passionate about backend development, REST API design, and building scalable applications through practical project experience.");
             profile.setEmail("sanjayashwin502@gmail.com");

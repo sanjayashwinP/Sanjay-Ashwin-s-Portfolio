@@ -3,13 +3,28 @@ import { ArrowRight, Mail, FileDown, Terminal, Code2, Sparkles } from 'lucide-re
 import { Github, Linkedin } from './Icons';
 
 export default function Hero({ profile }) {
-  const name = profile?.name || 'Sanjay Ashwin';
+  const name = profile?.name || 'Sanjay Ashwin P';
   const title = profile?.title || 'Java & Full-Stack Developer';
   const bio = profile?.bio || 'Computer Science undergraduate focused on Java, Spring Boot, REST APIs, and full-stack development.';
   const githubUrl = profile?.githubUrl || 'https://github.com/sanjayashwinP';
   const linkedinUrl = profile?.linkedinUrl || 'https://www.linkedin.com/in/sanjay-ashwin-62b566376';
   const resumeUrl = profile?.resumeUrl || '/api/resume/download';
-  const avatarUrl = profile?.avatarUrl;
+  const avatarUrl = profile?.avatarUrl || (typeof window !== 'undefined' ? localStorage.getItem('portfolio_avatar') : null);
+
+  // Formats developer name to bind trailing initial (like "P" or "P.") to preceding name
+  // using a non-breaking space (\u00A0), ensuring "P" never breaks alone to a new line.
+  const formatHeroName = (rawName) => {
+    if (!rawName) return 'Sanjay Ashwin P';
+    const trimmed = rawName.trim();
+    const parts = trimmed.split(/\s+/);
+    if (parts.length > 1) {
+      const lastPart = parts[parts.length - 1];
+      if (lastPart.length <= 3) {
+        return parts.slice(0, -1).join(' ') + '\u00A0' + lastPart;
+      }
+    }
+    return trimmed;
+  };
 
   return (
     <section className="hero-section" id="hero">
@@ -46,7 +61,7 @@ export default function Hero({ profile }) {
           </div>
 
           <h1 className="hero-title">
-            Hi, I'm <span className="highlight-text">{name}</span>
+            Hi, I'm <span className="highlight-text">{formatHeroName(name)}</span>
           </h1>
 
           <h2 className="hero-subtitle">{title}</h2>
@@ -135,7 +150,7 @@ export default function Hero({ profile }) {
               </div>
               <div className="term-output">
                 <p>&#123;</p>
-                <p className="indent">"developer": <span className="str">"Sanjay Ashwin"</span>,</p>
+                <p className="indent">"developer": <span className="str">"{name}"</span>,</p>
                 <p className="indent">"education": <span className="str">"Saveetha Engineering College"</span>,</p>
                 <p className="indent">"degree": <span className="str">"B.E. Computer Science (2023-2027)"</span>,</p>
                 <p className="indent">"cgpa": <span className="num">8.4</span>,</p>

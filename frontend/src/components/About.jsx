@@ -3,7 +3,7 @@ import { Server, Database, Code, Award, GraduationCap, Briefcase, UserCheck } fr
 
 export default function About({ profile }) {
   const cgpa = profile?.cgpa || '8.4';
-  const avatarUrl = profile?.avatarUrl;
+  const avatarUrl = profile?.avatarUrl || (typeof window !== 'undefined' ? localStorage.getItem('portfolio_avatar') : null);
 
   return (
     <section className="section about-section" id="about">
@@ -22,11 +22,11 @@ export default function About({ profile }) {
             {avatarUrl && (
               <div className="about-avatar-preview card">
                 <div className="about-avatar-img-wrap">
-                  <img src={avatarUrl} alt={profile?.name || 'Sanjay Ashwin'} className="about-avatar-img" />
+                  <img src={avatarUrl} alt={profile?.name || 'Sanjay Ashwin P'} className="about-avatar-img" />
                 </div>
                 <div className="about-avatar-caption">
                   <div className="about-avatar-header">
-                    <h3 className="about-avatar-name">{profile?.name || 'Sanjay Ashwin'}</h3>
+                    <h3 className="about-avatar-name">{profile?.name || 'Sanjay Ashwin P'}</h3>
                     <span className="badge badge-accent font-mono">CGPA {cgpa}</span>
                   </div>
                   <span className="avatar-role-text">{profile?.title || 'Java & Full-Stack Developer'}</span>

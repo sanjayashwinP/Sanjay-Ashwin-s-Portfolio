@@ -81,7 +81,19 @@ export default function AdminDashboardPage({ onNavigate }) {
 
       if (portfolioRes.status === 'fulfilled' && portfolioRes.value) {
         const p = portfolioRes.value;
-        if (p.profile) setProfile(p.profile);
+        if (p.profile) {
+          const prof = { ...p.profile };
+          const localAvatar = typeof window !== 'undefined' ? localStorage.getItem('portfolio_avatar') : null;
+          if ((!prof.avatarUrl || prof.avatarUrl.trim() === '') && localAvatar) {
+            prof.avatarUrl = localAvatar;
+            adminService.updateProfile(prof).catch(e => console.warn("Background sync of avatar failed:", e));
+          } else if (prof.avatarUrl && prof.avatarUrl.trim() !== '') {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('portfolio_avatar', prof.avatarUrl);
+            }
+          }
+          setProfile(prof);
+        }
         if (p.projects) setProjects(p.projects);
         if (p.skillsByCategory) setSkillsByCategory(p.skillsByCategory);
         if (p.experience) setExperience(p.experience);
@@ -129,38 +141,130 @@ export default function AdminDashboardPage({ onNavigate }) {
   };
 
   // --- Profile handlers ---
-  const handlePhotoUpload = (e) => {
+  const [savingPhoto, setSavingPhoto] = useState(false);
+
+  // Client-side bilinear canvas image compression to ensure instant uploads (<50KB) that never fail or timeout
+  const compressImage = (file, maxWidth = 500, maxHeight = 500, quality = 0.85) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      showNotification("Image size exceeds 5MB limit. Please choose a smaller photo.", "error");
-      return;
-    }
 
     if (!file.type.startsWith('image/')) {
       showNotification("Please select a valid image file (PNG, JPG, JPEG, WEBP).", "error");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64Data = reader.result;
-      setProfile(prev => ({ ...prev, avatarUrl: base64Data }));
-      showNotification("Photo selected! Click 'Save Profile Changes' below to persist.", "success");
-    };
-    reader.onerror = () => {
-      showNotification("Failed to read image file.", "error");
-    };
-    reader.readAsDataURL(file);
+    setSavingPhoto(true);
+    try {
+      showNotification("Compressing & saving photo...", "info");
+      const compressedBase64 = await compressImage(file, 500, 500, 0.85);
+
+      // 1. Immediately cache to browser storage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_avatar', compressedBase64);
+      }
+
+      // 2. Update React state
+      const updatedProfile = { ...profile, avatarUrl: compressedBase64 };
+      setProfile(updatedProfile);
+
+      // 3. Auto-save directly to backend cloud database
+      await adminService.updateProfile(updatedProfile);
+      showNotification("Profile photo uploaded, compressed, and permanently saved!", "success");
+    } catch (err) {
+      console.error("Photo upload error:", err);
+      showNotification("Failed to save photo: " + (err.message || "Unknown error"), "error");
+    } finally {
+      setSavingPhoto(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleSavePhotoDirectly = async () => {
+    if (!profile.avatarUrl || !profile.avatarUrl.trim()) {
+      showNotification("Please upload a photo or enter an image URL first.", "error");
+      return;
+    }
+    setSavingPhoto(true);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_avatar', profile.avatarUrl);
+      }
+      await adminService.updateProfile({ ...profile, avatarUrl: profile.avatarUrl });
+      showNotification("Photo synced and saved to database successfully!", "success");
+    } catch (err) {
+      showNotification(err.message || "Failed to save photo to server", "error");
+    } finally {
+      setSavingPhoto(false);
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!window.confirm("Are you sure you want to remove your profile photo?")) return;
+    setSavingPhoto(true);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('portfolio_avatar');
+      }
+      const updatedProfile = { ...profile, avatarUrl: '' };
+      setProfile(updatedProfile);
+      await adminService.updateProfile({ ...profile, avatarUrl: 'REMOVE' });
+      showNotification("Profile photo removed from website and database.", "info");
+    } catch (err) {
+      showNotification(err.message || "Failed to remove photo", "error");
+    } finally {
+      setSavingPhoto(false);
+    }
   };
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     try {
-      const updated = await adminService.updateProfile(profile);
+      const avatarToPersist = profile.avatarUrl || (typeof window !== 'undefined' ? localStorage.getItem('portfolio_avatar') : '') || '';
+      const payload = { ...profile, avatarUrl: avatarToPersist };
+      const updated = await adminService.updateProfile(payload);
+      if (updated.avatarUrl && typeof window !== 'undefined') {
+        localStorage.setItem('portfolio_avatar', updated.avatarUrl);
+      }
       setProfile(updated);
-      showNotification("Profile details and photo saved successfully!");
+      showNotification("Profile details saved successfully!");
     } catch (err) {
       showNotification(err.message || "Failed to update profile", "error");
     }
@@ -638,12 +742,12 @@ export default function AdminDashboardPage({ onNavigate }) {
               <div className="avatar-upload-card card" style={{ marginBottom: '1.75rem', padding: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
                   <div className="avatar-preview-box" style={{
-                    width: '100px',
-                    height: '100px',
+                    width: '110px',
+                    height: '110px',
                     borderRadius: '50%',
                     overflow: 'hidden',
-                    border: '3px solid var(--accent-primary)',
-                    boxShadow: '0 0 20px rgba(56, 189, 248, 0.25)',
+                    border: '3.5px solid var(--accent-primary)',
+                    boxShadow: '0 0 24px rgba(56, 189, 248, 0.3)',
                     background: 'var(--bg-elevated)',
                     display: 'flex',
                     alignItems: 'center',
@@ -654,32 +758,47 @@ export default function AdminDashboardPage({ onNavigate }) {
                     {profile.avatarUrl ? (
                       <img
                         src={profile.avatarUrl}
-                        alt={profile.name || 'Sanjay Ashwin'}
+                        alt={profile.name || 'Sanjay Ashwin P'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (
                       <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                        <Camera size={34} color="var(--accent-primary)" style={{ opacity: 0.8 }} />
-                        <div style={{ fontSize: '0.65rem', marginTop: '0.2rem' }}>No Photo</div>
+                        <Camera size={36} color="var(--accent-primary)" style={{ opacity: 0.85 }} />
+                        <div style={{ fontSize: '0.68rem', marginTop: '0.2rem', fontWeight: 600 }}>No Photo</div>
                       </div>
                     )}
                   </div>
 
-                  <div style={{ flex: '1', minWidth: '240px' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
-                      Profile Photo / Headshot
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.85rem', lineHeight: '1.4' }}>
-                      Upload your real photo or headshot to be prominently featured on your portfolio Hero and About sections.
+                  <div style={{ flex: '1', minWidth: '260px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>
+                        Profile Photo / Headshot
+                      </h3>
+                      {profile.avatarUrl ? (
+                        <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <CheckCircle2 size={12} /> Active & Persisted
+                        </span>
+                      ) : (
+                        <span className="badge badge-warning" style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}>
+                          No Photo Uploaded
+                        </span>
+                      )}
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.9rem', lineHeight: '1.45' }}>
+                      Upload your real photo or headshot to be prominently featured on your portfolio Hero and About sections. Photos are automatically optimized and saved to both the database and your browser storage so they never disappear.
                     </p>
 
                     <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <label className="btn btn-primary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <label
+                        className={`btn btn-primary btn-sm ${savingPhoto ? 'disabled' : ''}`}
+                        style={{ cursor: savingPhoto ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+                      >
                         <Upload size={14} />
-                        <span>Upload Photo File</span>
+                        <span>{savingPhoto ? 'Saving Photo...' : 'Upload Photo File'}</span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={savingPhoto}
                           onChange={handlePhotoUpload}
                           style={{ display: 'none' }}
                         />
@@ -688,11 +807,23 @@ export default function AdminDashboardPage({ onNavigate }) {
                       {profile.avatarUrl && (
                         <button
                           type="button"
+                          className="btn btn-secondary btn-sm"
+                          onClick={handleSavePhotoDirectly}
+                          disabled={savingPhoto}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+                        >
+                          <CheckCircle2 size={14} />
+                          <span>Save / Sync Photo</span>
+                        </button>
+                      )}
+
+                      {profile.avatarUrl && (
+                        <button
+                          type="button"
                           className="btn btn-danger btn-sm"
-                          onClick={() => {
-                            setProfile({ ...profile, avatarUrl: '' });
-                            showNotification("Photo removed. Click 'Save Profile Changes' below to persist.", "info");
-                          }}
+                          onClick={handleRemovePhoto}
+                          disabled={savingPhoto}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
                         >
                           <Trash2 size={14} />
                           <span>Remove Photo</span>
@@ -700,17 +831,27 @@ export default function AdminDashboardPage({ onNavigate }) {
                       )}
                     </div>
 
-                    <div style={{ marginTop: '0.75rem' }}>
-                      <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>
+                    <div style={{ marginTop: '0.85rem' }}>
+                      <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>
                         Or enter direct image URL:
                       </label>
-                      <input
-                        type="url"
-                        placeholder="https://example.com/my-photo.jpg"
-                        value={profile.avatarUrl || ''}
-                        onChange={e => setProfile({ ...profile, avatarUrl: e.target.value })}
-                        style={{ width: '100%', fontSize: '0.85rem', padding: '0.4rem 0.65rem' }}
-                      />
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                          type="url"
+                          placeholder="https://example.com/my-photo.jpg"
+                          value={profile.avatarUrl || ''}
+                          onChange={e => setProfile({ ...profile, avatarUrl: e.target.value })}
+                          style={{ flex: 1, fontSize: '0.85rem', padding: '0.4rem 0.65rem' }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          onClick={handleSavePhotoDirectly}
+                          disabled={savingPhoto}
+                        >
+                          Save URL
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

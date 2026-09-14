@@ -41,7 +41,15 @@ public class ProfileService {
         profile.setResumeUrl(dto.getResumeUrl());
         profile.setCgpa(dto.getCgpa());
         profile.setEducationSummary(dto.getEducationSummary());
-        profile.setAvatarUrl(dto.getAvatarUrl());
+        // Protect existing avatar from accidental blanking
+        if (dto.getAvatarUrl() != null) {
+            if ("REMOVE".equalsIgnoreCase(dto.getAvatarUrl()) || "DELETE".equalsIgnoreCase(dto.getAvatarUrl())) {
+                profile.setAvatarUrl("");
+            } else if (!dto.getAvatarUrl().isBlank()) {
+                profile.setAvatarUrl(dto.getAvatarUrl());
+            }
+            // If dto.getAvatarUrl() is empty/blank string without REMOVE, keep existing profile.getAvatarUrl()
+        }
         profile.setWorkplace(dto.getWorkplace());
         profile.setUpdatedAt(LocalDateTime.now());
 

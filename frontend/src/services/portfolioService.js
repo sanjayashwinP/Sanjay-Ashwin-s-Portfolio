@@ -3,7 +3,7 @@ import { request } from './api';
 // Verified default portfolio data from Sanjay Ashwin's Resume
 export const defaultPortfolioData = {
   profile: {
-    name: "Sanjay Ashwin",
+    name: "Sanjay Ashwin P",
     title: "Java & Full-Stack Developer",
     bio: "Computer Science and Engineering undergraduate with strong knowledge in Java, Spring Boot, Spring Security, and full-stack web development. Passionate about backend development, REST API design, and building scalable applications through practical project experience.",
     email: "sanjayashwin502@gmail.com",
@@ -133,10 +133,32 @@ export const portfolioService = {
   async getPortfolioData() {
     try {
       const res = await request('/portfolio');
-      return res?.data || defaultPortfolioData;
+      const data = res?.data || { ...defaultPortfolioData };
+      
+      // Avatar fallback & sync
+      if (data.profile) {
+        const localAvatar = typeof window !== 'undefined' ? localStorage.getItem('portfolio_avatar') : null;
+        if (!data.profile.avatarUrl || data.profile.avatarUrl.trim() === '') {
+          if (localAvatar) {
+            data.profile.avatarUrl = localAvatar;
+          }
+        } else if (data.profile.avatarUrl && data.profile.avatarUrl.trim() !== '') {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('portfolio_avatar', data.profile.avatarUrl);
+          }
+        }
+      }
+      return data;
     } catch (err) {
       console.warn("Using verified fallback resume data:", err.message);
-      return defaultPortfolioData;
+      const fallbackData = { ...defaultPortfolioData };
+      if (typeof window !== 'undefined') {
+        const localAvatar = localStorage.getItem('portfolio_avatar');
+        if (localAvatar && fallbackData.profile) {
+          fallbackData.profile.avatarUrl = localAvatar;
+        }
+      }
+      return fallbackData;
     }
   },
 
