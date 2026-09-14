@@ -42,6 +42,11 @@ public class PublicPortfolioController {
         this.contactMessageService = contactMessageService;
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<ApiResponse<String>> getHealth() {
+        return ResponseEntity.ok(ApiResponse.ok("OK", "Service is healthy and operating normally"));
+    }
+
     @GetMapping("/portfolio")
     public ResponseEntity<ApiResponse<PortfolioDataDto>> getFullPortfolio() {
         PortfolioDataDto data = dashboardService.getFullPortfolioData();
