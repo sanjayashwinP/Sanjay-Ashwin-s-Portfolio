@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanjay Ashwin | Java & Full-Stack Developer</title>
+    <meta name="description" content="Sanjay Ashwin - Computer Science and Engineering undergraduate focused on Java, Spring Boot, Spring Security, REST APIs, MySQL, and ReactJS full-stack development." />
+    <meta name="keywords" content="Sanjay Ashwin, Java Developer, Spring Boot, REST APIs, Full Stack Developer, ReactJS, MySQL, Software Engineer Portfolio" />
+    <meta name="author" content="Sanjay Ashwin" />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sanjay Ashwin | Java & Full-Stack Developer" />
+    <meta property="og:description" content="Computer Science undergraduate passionate about backend development, REST API design, and building scalable full-stack applications with Java and Spring Boot." />
+    <meta property="og:image" content="/favicon.svg" />
+
+    <!-- Color Scheme & Theme Color -->
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0f19" />
+
+    <!-- Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Inline script to prevent theme FOUC -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem("portfolio_theme");
+          if (saved === "light" || saved === "dark") {
+            document.documentElement.setAttribute("data-theme", saved);
+          } else {
+            var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
