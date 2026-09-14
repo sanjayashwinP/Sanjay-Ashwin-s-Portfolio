@@ -47,6 +47,9 @@ public class Profile {
     @Column(name = "avatar_url", columnDefinition = "LONGTEXT")
     private String avatarUrl;
 
+    @Column(length = 250)
+    private String workplace;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -155,6 +158,14 @@ public class Profile {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getWorkplace() {
+        return workplace;
+    }
+
+    public void setWorkplace(String workplace) {
+        this.workplace = workplace;
     }
 
     public LocalDateTime getUpdatedAt() {

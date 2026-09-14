@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS profile (
     cgpa VARCHAR(20),
     education_summary VARCHAR(255),
     avatar_url LONGTEXT,
+    workplace VARCHAR(250),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 

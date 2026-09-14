@@ -42,6 +42,7 @@ public class ProfileService {
         profile.setCgpa(dto.getCgpa());
         profile.setEducationSummary(dto.getEducationSummary());
         profile.setAvatarUrl(dto.getAvatarUrl());
+        profile.setWorkplace(dto.getWorkplace());
         profile.setUpdatedAt(LocalDateTime.now());
 
         Profile saved = profileRepository.save(profile);
@@ -63,6 +64,7 @@ public class ProfileService {
         dto.setCgpa(p.getCgpa());
         dto.setEducationSummary(p.getEducationSummary());
         dto.setAvatarUrl(p.getAvatarUrl());
+        dto.setWorkplace(p.getWorkplace());
         return dto;
     }
 }

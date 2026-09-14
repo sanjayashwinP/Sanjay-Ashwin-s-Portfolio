@@ -32,6 +32,7 @@ public class ProfileDto {
     private String cgpa;
     private String educationSummary;
     private String avatarUrl;
+    private String workplace;
 
     public ProfileDto() {
     }
@@ -138,5 +139,13 @@ public class ProfileDto {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getWorkplace() {
+        return workplace;
+    }
+
+    public void setWorkplace(String workplace) {
+        this.workplace = workplace;
     }
 }

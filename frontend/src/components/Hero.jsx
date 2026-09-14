@@ -32,13 +32,15 @@ export default function Hero({ profile }) {
             </div>
 
             <div className="hero-profile-meta">
-              <div className="hero-badge">
-                <span className="status-dot"></span>
-                <span className="badge-text">Available for SDE Roles & Internships</span>
-              </div>
               <div className="hero-meta-details">
-                <span className="hero-meta-college font-mono">Saveetha Engineering College • CGPA 8.4</span>
-                <span className="hero-meta-loc font-mono">📍 {profile?.location || 'Chennai, India'}</span>
+                {(profile?.workplace || 'Saveetha Engineering College • CGPA 8.4') && (
+                  <div className="hero-meta-workplace font-mono">
+                    {profile?.workplace || 'Saveetha Engineering College • CGPA 8.4'}
+                  </div>
+                )}
+                <div className="hero-meta-loc font-mono">
+                  📍 {profile?.location || 'Chennai, India'}
+                </div>
               </div>
             </div>
           </div>

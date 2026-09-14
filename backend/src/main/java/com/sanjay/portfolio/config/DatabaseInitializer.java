@@ -87,6 +87,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             profile.setEmail("sanjayashwin502@gmail.com");
             profile.setPhone("+91-8870794020");
             profile.setLocation("Chennai, India");
+            profile.setWorkplace("Saveetha Engineering College • CGPA 8.4");
             profile.setGithubUrl("https://github.com/sanjayashwinP");
             profile.setLinkedinUrl("https://www.linkedin.com/in/sanjay-ashwin-62b566376");
             profile.setResumeUrl("/api/resume/download");
@@ -95,6 +96,14 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             profileRepository.save(profile);
             log.info("Seeded primary profile for Sanjay Ashwin.");
+        } else {
+            profileRepository.findAll().stream().findFirst().ifPresent(profile -> {
+                if (profile.getWorkplace() == null || profile.getWorkplace().isBlank()) {
+                    profile.setWorkplace("Saveetha Engineering College • CGPA 8.4");
+                    profileRepository.save(profile);
+                    log.info("Populated default workplace for profile.");
+                }
+            });
         }
     }
 

@@ -761,9 +761,23 @@ export default function AdminDashboardPage({ onNavigate }) {
                     <label>Location</label>
                     <input
                       type="text"
+                      placeholder="e.g. Chennai, India"
                       value={profile.location || ''}
                       onChange={e => setProfile({ ...profile, location: e.target.value })}
                     />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Current Workplace / Role / College</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Saveetha Engineering College • CGPA 8.4 or Software Engineer @ Company"
+                      value={profile.workplace || ''}
+                      onChange={e => setProfile({ ...profile, workplace: e.target.value })}
+                    />
+                    <small style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '4px', display: 'block' }}>
+                      Headline shown in hero banner (e.g., your college now, or future role & company).
+                    </small>
                   </div>
 
                   <div className="form-group">
