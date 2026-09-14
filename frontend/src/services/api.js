@@ -1,9 +1,15 @@
 // Base API Client Wrapper
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+// Automatically handle URLs whether user provides with or without /api or trailing slashes
+const rawBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').trim().replace(/\/+$/, '');
+const BASE_URL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 export async function request(endpoint, options = {}) {
-  const url = `${BASE_URL}${endpoint}`;
+  let cleanEndpoint = endpoint.startsWith('/api/') ? endpoint.substring(4) : endpoint;
+  if (!cleanEndpoint.startsWith('/')) {
+    cleanEndpoint = `/${cleanEndpoint}`;
+  }
+  const url = `${BASE_URL}${cleanEndpoint}`;
   const token = localStorage.getItem('portfolio_token');
 
   const headers = {

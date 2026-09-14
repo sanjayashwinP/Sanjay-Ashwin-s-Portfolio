@@ -63,9 +63,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Public auth and contact endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/health", "/health").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/contact", "/contact").permitAll()
 
                         // Public portfolio data endpoints (read-only)
                         .requestMatchers(HttpMethod.GET, "/api/portfolio/**").permitAll()
