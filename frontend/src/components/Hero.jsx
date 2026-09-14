@@ -1,23 +1,39 @@
 import React from 'react';
-import { ArrowRight, Mail, FileDown, Terminal, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Mail, FileDown, Terminal, Code2, Sparkles } from 'lucide-react';
 import { Github, Linkedin } from './Icons';
 
 export default function Hero({ profile }) {
   const name = profile?.name || 'Sanjay Ashwin';
   const title = profile?.title || 'Java & Full-Stack Developer';
-  const bio = profile?.bio || 'Computer Science undergraduate focused on Java, Spring Boot, REST APIs and full-stack development.';
-  const githubUrl = profile?.githubUrl;
-  const linkedinUrl = profile?.linkedinUrl;
-  const resumeUrl = profile?.resumeUrl || '/Sanjay_Ashwin_Resume.pdf';
+  const bio = profile?.bio || 'Computer Science undergraduate focused on Java, Spring Boot, REST APIs, and full-stack development.';
+  const githubUrl = profile?.githubUrl || 'https://github.com/sanjayashwinP';
+  const linkedinUrl = profile?.linkedinUrl || 'https://www.linkedin.com/in/sanjay-ashwin-62b566376';
+  const resumeUrl = profile?.resumeUrl || '/api/resume/download';
+  const avatarUrl = profile?.avatarUrl;
 
   return (
     <section className="hero-section" id="hero">
       <div className="container hero-container">
         <div className="hero-content">
-          {/* Status Badge */}
-          <div className="hero-badge">
-            <span className="status-dot"></span>
-            <span className="badge-text">Available for Software Engineering Roles & Internships</span>
+          {/* Developer Profile Header with Optional Avatar */}
+          <div className="hero-profile-row">
+            {avatarUrl ? (
+              <div className="hero-avatar-frame">
+                <img src={avatarUrl} alt={name} className="hero-avatar-img" />
+                <span className="hero-avatar-status" title="Active & Ready"></span>
+              </div>
+            ) : (
+              <div className="hero-avatar-placeholder">
+                <span className="hero-avatar-initials">SA</span>
+                <span className="hero-avatar-status" title="Active & Ready"></span>
+              </div>
+            )}
+
+            {/* Status Pill Badge */}
+            <div className="hero-badge">
+              <span className="status-dot"></span>
+              <span className="badge-text">Available for SDE Roles & Internships</span>
+            </div>
           </div>
 
           <h1 className="hero-title">
@@ -28,14 +44,14 @@ export default function Hero({ profile }) {
 
           <p className="hero-description">{bio}</p>
 
-          {/* Quick Technical Highlights */}
+          {/* Quick Technical Stack Badges */}
           <div className="hero-tags">
             <span className="badge badge-accent">Java 21</span>
             <span className="badge badge-accent">Spring Boot 3</span>
             <span className="badge badge-accent">Spring Security</span>
             <span className="badge badge-accent">REST APIs</span>
-            <span className="badge badge-accent">ReactJS</span>
             <span className="badge badge-accent">MySQL</span>
+            <span className="badge badge-accent">ReactJS</span>
           </div>
 
           {/* Action CTAs */}
@@ -62,7 +78,7 @@ export default function Hero({ profile }) {
             </a>
           </div>
 
-          {/* Social Links (displayed only when configured) */}
+          {/* Social Links */}
           <div className="hero-socials">
             {githubUrl && (
               <a
@@ -72,7 +88,7 @@ export default function Hero({ profile }) {
                 className="social-link"
                 aria-label="GitHub Profile"
               >
-                <Github size={19} />
+                <Github size={18} />
                 <span>GitHub</span>
               </a>
             )}
@@ -85,7 +101,7 @@ export default function Hero({ profile }) {
                 className="social-link"
                 aria-label="LinkedIn Profile"
               >
-                <Linkedin size={19} />
+                <Linkedin size={18} />
                 <span>LinkedIn</span>
               </a>
             )}

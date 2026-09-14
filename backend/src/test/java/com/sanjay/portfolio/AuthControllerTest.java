@@ -24,7 +24,7 @@ class AuthControllerTest {
 
     @Test
     void testSuccessfulLogin() throws Exception {
-        AuthRequest validRequest = new AuthRequest("admin", "adminPassword123!");
+        AuthRequest validRequest = new AuthRequest("sanjay_admin", "Sanjay@SecureAdmin2026!");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -32,12 +32,12 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.token").isNotEmpty())
-                .andExpect(jsonPath("$.data.username").value("admin"));
+                .andExpect(jsonPath("$.data.username").value("sanjay_admin"));
     }
 
     @Test
     void testFailedLoginWithBadCredentials() throws Exception {
-        AuthRequest invalidRequest = new AuthRequest("admin", "wrongPassword");
+        AuthRequest invalidRequest = new AuthRequest("sanjay_admin", "wrongPassword");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

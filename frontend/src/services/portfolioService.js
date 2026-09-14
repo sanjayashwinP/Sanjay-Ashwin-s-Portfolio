@@ -13,6 +13,7 @@ export const defaultPortfolioData = {
     linkedinUrl: "https://www.linkedin.com/in/sanjay-ashwin-62b566376",
     resumeUrl: "/Sanjay_Ashwin_Resume.pdf",
     cgpa: "8.4",
+    avatarUrl: "",
     educationSummary: "B.E. Computer Science and Engineering, Saveetha Engineering College (2023 - 2027)"
   },
   skillsByCategory: {

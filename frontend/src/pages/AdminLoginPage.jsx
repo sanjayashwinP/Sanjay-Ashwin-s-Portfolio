@@ -4,7 +4,7 @@ import { Lock, User, KeyRound, AlertCircle, ArrowLeft, ShieldCheck, Loader2 } fr
 
 export default function AdminLoginPage({ onNavigate }) {
   const { login, isAuthenticated } = useAuth();
-  const [username, setUsername] = useState('admin');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -67,19 +67,8 @@ export default function AdminLoginPage({ onNavigate }) {
             </div>
             <h1 className="admin-login-title">Portfolio CMS Login</h1>
             <p className="admin-login-subtitle">
-              Secure Spring Security JWT administration console
+              Authorized personnel only &bull; Spring Security JWT Protected
             </p>
-          </div>
-
-          {/* Quick Demo Credentials Info */}
-          <div className="demo-credentials-banner">
-            <ShieldCheck size={16} />
-            <div>
-              <strong>Evaluation Credentials:</strong>
-              <div className="demo-credentials-text">
-                User: <code>admin</code> &bull; Pass: <code>adminPassword123!</code>
-              </div>
-            </div>
           </div>
 
           {error && (

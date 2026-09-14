@@ -74,15 +74,7 @@ export default function Navbar({ profile }) {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* Admin Dashboard Entry */}
-          <a
-            href="/admin/dashboard"
-            className="icon-btn admin-link-btn"
-            aria-label="Admin Dashboard"
-            title="Admin Dashboard"
-          >
-            <Lock size={16} />
-          </a>
+
 
           {/* Mobile Menu Toggle */}
           <button

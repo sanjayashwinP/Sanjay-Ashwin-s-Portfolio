@@ -35,17 +35,17 @@ export default function Footer({ profile }) {
             <div className="footer-col">
               <h4 className="footer-heading">Connect</h4>
               <ul className="footer-social-links">
-                {profile?.github && (
+                {(profile?.githubUrl || profile?.github) && (
                   <li>
-                    <a href={profile.github} target="_blank" rel="noopener noreferrer">
+                    <a href={profile.githubUrl || profile.github} target="_blank" rel="noopener noreferrer">
                       <Github size={16} />
                       <span>GitHub</span>
                     </a>
                   </li>
                 )}
-                {profile?.linkedin && (
+                {(profile?.linkedinUrl || profile?.linkedin) && (
                   <li>
-                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+                    <a href={profile.linkedinUrl || profile.linkedin} target="_blank" rel="noopener noreferrer">
                       <Linkedin size={16} />
                       <span>LinkedIn</span>
                     </a>
@@ -74,14 +74,10 @@ export default function Footer({ profile }) {
 
         <div className="footer-bottom">
           <div className="footer-copy">
-            <p>© {currentYear} Sanjay Ashwin. Designed & built with Spring Boot 3, Java 21, React & MySQL.</p>
+            <p>© {currentYear} Sanjay Ashwin. Built with Spring Boot 3, Java 21, React & MySQL.</p>
           </div>
 
           <div className="footer-actions">
-            <a href="/admin/dashboard" className="footer-admin-link">
-              <Lock size={14} />
-              <span>Admin CMS</span>
-            </a>
             <button
               type="button"
               onClick={scrollToTop}
@@ -89,7 +85,7 @@ export default function Footer({ profile }) {
               aria-label="Back to top"
             >
               <ArrowUp size={16} />
-              <span>Top</span>
+              <span>Back to Top</span>
             </button>
           </div>
         </div>

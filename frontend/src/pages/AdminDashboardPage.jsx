@@ -6,7 +6,7 @@ import { adminService } from '../services/adminService';
 import {
   Layers, User, Award, Briefcase, GraduationCap, Mail, CheckCircle2,
   AlertCircle, LogOut, ExternalLink, Plus, Trash2, Edit3, Save, X,
-  Sun, Moon, Shield, RefreshCw, Eye, MessageSquare, Sparkles
+  Sun, Moon, Shield, RefreshCw, Eye, MessageSquare, Sparkles, Upload, Camera
 } from 'lucide-react';
 
 export default function AdminDashboardPage({ onNavigate }) {
@@ -129,12 +129,38 @@ export default function AdminDashboardPage({ onNavigate }) {
   };
 
   // --- Profile handlers ---
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Image size exceeds 5MB limit. Please choose a smaller photo.", "error");
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      showNotification("Please select a valid image file (PNG, JPG, JPEG, WEBP).", "error");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Data = reader.result;
+      setProfile(prev => ({ ...prev, avatarUrl: base64Data }));
+      showNotification("Photo selected! Click 'Save Profile Changes' below to persist.", "success");
+    };
+    reader.onerror = () => {
+      showNotification("Failed to read image file.", "error");
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     try {
       const updated = await adminService.updateProfile(profile);
       setProfile(updated);
-      showNotification("Profile details saved successfully!");
+      showNotification("Profile details and photo saved successfully!");
     } catch (err) {
       showNotification(err.message || "Failed to update profile", "error");
     }
@@ -591,6 +617,89 @@ export default function AdminDashboardPage({ onNavigate }) {
           {activeTab === 'profile' && (
             <div className="tab-pane">
               <h2 className="admin-pane-title">Personal Profile & Bio</h2>
+
+              {/* Profile Photo / Avatar Upload Section */}
+              <div className="avatar-upload-card card" style={{ marginBottom: '1.75rem', padding: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                  <div className="avatar-preview-box" style={{
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '3px solid var(--accent-primary)',
+                    boxShadow: '0 0 20px rgba(56, 189, 248, 0.25)',
+                    background: 'var(--bg-elevated)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                    flexShrink: 0
+                  }}>
+                    {profile.avatarUrl ? (
+                      <img
+                        src={profile.avatarUrl}
+                        alt={profile.name || 'Sanjay Ashwin'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                        <Camera size={34} color="var(--accent-primary)" style={{ opacity: 0.8 }} />
+                        <div style={{ fontSize: '0.65rem', marginTop: '0.2rem' }}>No Photo</div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ flex: '1', minWidth: '240px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.3rem', color: 'var(--text-primary)' }}>
+                      Profile Photo / Headshot
+                    </h3>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.85rem', lineHeight: '1.4' }}>
+                      Upload your real photo or headshot to be prominently featured on your portfolio Hero and About sections.
+                    </p>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <label className="btn btn-primary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Upload size={14} />
+                        <span>Upload Photo File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+
+                      {profile.avatarUrl && (
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            setProfile({ ...profile, avatarUrl: '' });
+                            showNotification("Photo removed. Click 'Save Profile Changes' below to persist.", "info");
+                          }}
+                        >
+                          <Trash2 size={14} />
+                          <span>Remove Photo</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: '0.75rem' }}>
+                      <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>
+                        Or enter direct image URL:
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://example.com/my-photo.jpg"
+                        value={profile.avatarUrl || ''}
+                        onChange={e => setProfile({ ...profile, avatarUrl: e.target.value })}
+                        style={{ width: '100%', fontSize: '0.85rem', padding: '0.4rem 0.65rem' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <form onSubmit={handleSaveProfile} className="admin-form card">
                 <div className="form-grid-2">
                   <div className="form-group">

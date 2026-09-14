@@ -64,15 +64,18 @@ public class DatabaseInitializer implements CommandLineRunner {
     }
 
     private void seedAdminUser() {
-        if (adminUserRepository.count() == 0) {
-            AdminUser admin = new AdminUser(
-                    adminUsername,
-                    passwordEncoder.encode(adminPassword),
-                    "ROLE_ADMIN"
-            );
-            adminUserRepository.save(admin);
-            log.info("Created default admin user: {}", adminUsername);
+        // Delete insecure legacy 'admin' if present
+        if (!"admin".equals(adminUsername)) {
+            adminUserRepository.findByUsername("admin").ifPresent(adminUserRepository::delete);
         }
+
+        AdminUser admin = adminUserRepository.findByUsername(adminUsername)
+                .orElse(new AdminUser());
+        admin.setUsername(adminUsername);
+        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setRole("ROLE_ADMIN");
+        adminUserRepository.save(admin);
+        log.info("Configured secure admin account: {}", adminUsername);
     }
 
     private void seedProfile() {

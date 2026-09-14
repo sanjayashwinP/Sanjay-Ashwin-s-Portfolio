@@ -31,6 +31,7 @@ public class ProfileDto {
     private String resumeUrl;
     private String cgpa;
     private String educationSummary;
+    private String avatarUrl;
 
     public ProfileDto() {
     }
@@ -129,5 +130,13 @@ public class ProfileDto {
 
     public void setEducationSummary(String educationSummary) {
         this.educationSummary = educationSummary;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
