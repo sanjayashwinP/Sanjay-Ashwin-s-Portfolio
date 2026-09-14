@@ -20,8 +20,12 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Create a dedicated non-root application user for container security
-RUN addgroup -S spring && adduser -S spring -G spring
+# Create a dedicated non-root application user and ensure writable data directory
+RUN addgroup -S spring && adduser -S spring -G spring \
+    && mkdir -p /app/data \
+    && chown -R spring:spring /app \
+    && chmod -R 777 /app/data
+
 USER spring:spring
 
 # Copy built JAR from builder stage
