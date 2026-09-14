@@ -74,7 +74,7 @@ export default function Footer({ profile }) {
 
         <div className="footer-bottom">
           <div className="footer-copy">
-            <p>© {currentYear} Sanjay Ashwin. Built with Spring Boot 3, Java 21, React & MySQL.</p>
+            <p>© {currentYear} Sanjay Ashwin. All rights reserved.</p>
           </div>
 
           <div className="footer-actions">
