@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # MySQL 8 Relational Database
+  mysql:
+    image: mysql:8.0
+    container_name: sanjay-portfolio-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sanjay_portfolio
+      MYSQL_USER: sanjay_user
+      MYSQL_PASSWORD: sanjayPassword123!
+      MYSQL_ROOT_PASSWORD: rootPassword123!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/src/main/resources/schema-mysql.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootPassword123!"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - portfolio-network
+
+  # Spring Boot 3 Java 21 REST API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sanjay-portfolio-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sanjay_portfolio?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: sanjay_user
+      SPRING_DATASOURCE_PASSWORD: sanjayPassword123!
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: adminPassword123!
+      CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:3000,http://localhost:5173,http://localhost:80
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - portfolio-network
+
+  # React 19 Frontend served by Nginx Alpine
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sanjay-portfolio-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - portfolio-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  portfolio-network:
+    driver: bridge
