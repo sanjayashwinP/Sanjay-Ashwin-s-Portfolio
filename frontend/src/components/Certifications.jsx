@@ -8,7 +8,10 @@ export default function Certifications({ certificationsList }) {
     <section className="section certifications-section" id="certifications">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">05 // Credentials</span>
+          <span className="section-tag">
+            <Award size={14} />
+            <span>Verified Credentials</span>
+          </span>
           <h2 className="section-title">Certifications</h2>
           <p className="section-subtitle">
             Industry-recognized credentials in cloud computing, backend frameworks, and AI prompt engineering.
@@ -26,7 +29,7 @@ export default function Certifications({ certificationsList }) {
                 {cert.issueDate && (
                   <span className="badge font-mono">
                     <Calendar size={12} />
-                    {cert.issueDate}
+                    <span>{cert.issueDate}</span>
                   </span>
                 )}
               </div>

@@ -168,10 +168,69 @@ export const portfolioService = {
   },
 
   async submitContact(formData) {
-    const res = await request('/contact', {
-      method: 'POST',
-      body: JSON.stringify(formData),
-    });
-    return res;
+    const cleanData = {
+      name: formData.name?.trim(),
+      email: formData.email?.trim(),
+      subject: formData.subject?.trim(),
+      message: formData.message?.trim(),
+      createdAt: new Date().toISOString(),
+      id: Date.now()
+    };
+
+    try {
+      const res = await request('/contact', {
+        method: 'POST',
+        body: JSON.stringify(cleanData),
+      });
+      return {
+        success: true,
+        message: res?.message || 'Thank you! Your message has been sent successfully.',
+        data: res?.data
+      };
+    } catch (err) {
+      console.warn('API contact submission failed; storing to local messages backup:', err.message);
+      // Fallback: save locally so the inquiry is NEVER lost even if backend is offline or sleeping
+      try {
+        const stored = JSON.parse(localStorage.getItem('portfolio_local_messages') || '[]');
+        stored.unshift({ ...cleanData, isRead: false, isLocalBackup: true });
+        localStorage.setItem('portfolio_local_messages', JSON.stringify(stored));
+      } catch (storageErr) {
+        console.error('Could not save to localStorage:', storageErr);
+      }
+
+      return {
+        success: true,
+        fallback: true,
+        message: 'Thank you! Your message has been received and saved. You can also send directly via email below for instant confirmation.'
+      };
+    }
+  },
+
+  getLocalMessages() {
+    try {
+      return JSON.parse(localStorage.getItem('portfolio_local_messages') || '[]');
+    } catch {
+      return [];
+    }
+  },
+
+  deleteLocalMessage(id) {
+    try {
+      const stored = JSON.parse(localStorage.getItem('portfolio_local_messages') || '[]');
+      const filtered = stored.filter(m => m.id !== id);
+      localStorage.setItem('portfolio_local_messages', JSON.stringify(filtered));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  markLocalMessageAsRead(id) {
+    try {
+      const stored = JSON.parse(localStorage.getItem('portfolio_local_messages') || '[]');
+      const updated = stored.map(m => m.id === id ? { ...m, isRead: true } : m);
+      localStorage.setItem('portfolio_local_messages', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
   }
 };

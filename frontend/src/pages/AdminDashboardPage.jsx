@@ -105,9 +105,12 @@ export default function AdminDashboardPage({ onNavigate }) {
         setStats(statsRes.value);
       }
 
-      if (messagesRes.status === 'fulfilled' && messagesRes.value) {
-        setMessages(messagesRes.value);
-      }
+      const serverMessages = (messagesRes.status === 'fulfilled' && messagesRes.value) ? messagesRes.value : [];
+      const localMessages = portfolioService.getLocalMessages();
+      const serverIds = new Set(serverMessages.map(m => m.id));
+      const merged = [...serverMessages, ...localMessages.filter(m => !serverIds.has(m.id))];
+      merged.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      setMessages(merged);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
       showNotification("Failed to load some dashboard items from API.", "error");
@@ -502,23 +505,23 @@ export default function AdminDashboardPage({ onNavigate }) {
   const handleMarkAsRead = async (id) => {
     try {
       await adminService.markMessageAsRead(id);
-      setMessages(messages.map(m => m.id === id ? { ...m, isRead: true } : m));
-      setStats(prev => ({ ...prev, unreadMessages: Math.max(0, (prev.unreadMessages || 1) - 1) }));
-      showNotification("Message marked as read.");
-    } catch (err) {
-      showNotification("Failed to update message status", "error");
+    } catch {
+      portfolioService.markLocalMessageAsRead(id);
     }
+    setMessages(messages.map(m => m.id === id ? { ...m, isRead: true } : m));
+    setStats(prev => ({ ...prev, unreadMessages: Math.max(0, (prev.unreadMessages || 1) - 1) }));
+    showNotification("Message marked as read.");
   };
 
   const handleDeleteMessage = async (id) => {
     if (!window.confirm("Delete this contact message?")) return;
     try {
       await adminService.deleteMessage(id);
-      setMessages(messages.filter(m => m.id !== id));
-      showNotification("Message removed.");
-    } catch (err) {
-      showNotification("Failed to delete message", "error");
+    } catch {
+      portfolioService.deleteLocalMessage(id);
     }
+    setMessages(messages.filter(m => m.id !== id));
+    showNotification("Message removed.");
   };
 
   const unreadCount = messages.filter(m => !m.isRead).length;
@@ -1622,6 +1625,16 @@ export default function AdminDashboardPage({ onNavigate }) {
                           </span>
                         </div>
                         <div className="table-actions">
+                          <a
+                            href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Portfolio Inquiry')}`}
+                            className="btn btn-secondary btn-sm"
+                            title="Reply via Email"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Mail size={14} />
+                            <span>Reply</span>
+                          </a>
                           {!msg.isRead && (
                             <button
                               type="button"

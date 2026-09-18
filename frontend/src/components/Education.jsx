@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Calendar, MapPin, Award } from 'lucide-react';
+import { GraduationCap, Calendar, MapPin } from 'lucide-react';
 
 export default function Education({ educationList }) {
   if (!educationList || educationList.length === 0) return null;
@@ -8,10 +8,13 @@ export default function Education({ educationList }) {
     <section className="section education-section" id="education">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">04 // Academics</span>
+          <span className="section-tag">
+            <GraduationCap size={14} />
+            <span>Academic Background</span>
+          </span>
           <h2 className="section-title">Education</h2>
           <p className="section-subtitle">
-            Undergraduate foundations in computer science, data structures, database systems, and software engineering.
+            Undergraduate foundations in computer science, data structures, algorithms, database systems, and software engineering.
           </p>
         </div>
 
@@ -42,12 +45,12 @@ export default function Education({ educationList }) {
                 <div className="edu-meta-row">
                   <span className="badge font-mono">
                     <Calendar size={13} />
-                    {edu.startDate} – {edu.endDate}
+                    <span>{edu.startDate} – {edu.endDate}</span>
                   </span>
                   {edu.location && (
                     <span className="badge font-mono">
                       <MapPin size={13} />
-                      {edu.location}
+                      <span>{edu.location}</span>
                     </span>
                   )}
                 </div>

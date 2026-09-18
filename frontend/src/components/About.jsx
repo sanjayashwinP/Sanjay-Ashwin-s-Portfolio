@@ -1,5 +1,5 @@
 import React from 'react';
-import { Server, Database, Code, Award, GraduationCap, Briefcase, UserCheck } from 'lucide-react';
+import { User, Server, Database, Code2 } from 'lucide-react';
 
 export default function About({ profile }) {
   const cgpa = profile?.cgpa || '8.4';
@@ -9,10 +9,13 @@ export default function About({ profile }) {
     <section className="section about-section" id="about">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">01 // Background</span>
-          <h2 className="section-title">About Me</h2>
+          <span className="section-tag">
+            <User size={14} />
+            <span>About Sanjay</span>
+          </span>
+          <h2 className="section-title">Background & Engineering Focus</h2>
           <p className="section-subtitle">
-            A developer passionate about building reliable backend services, secure RESTful APIs, and full-stack software applications.
+            A software developer passionate about building reliable backend systems, secure RESTful microservices, and cohesive full-stack applications.
           </p>
         </div>
 
@@ -37,17 +40,17 @@ export default function About({ profile }) {
 
             <div className="about-text-content">
               <p className="about-text">
-                I am a Computer Science and Engineering undergraduate at <strong>Saveetha Engineering College</strong> (2023 – 2027) with a current <strong>CGPA of {cgpa}</strong>.
+                I am a Computer Science and Engineering undergraduate at <strong>Saveetha Engineering College</strong> (2023 – 2027) with an academic record of <strong>CGPA {cgpa}</strong>.
               </p>
               <p className="about-text">
-                My core technical focus centers on <strong>Java backend development and modern full-stack web engineering</strong>. I have built comprehensive applications using <strong>Spring Boot, Spring Security, MySQL, and ReactJS</strong>, emphasizing clean code, modular architecture, and industry-standard REST API design.
+                My primary expertise lies in <strong>Java backend development and modern full-stack web engineering</strong>. I focus on developing clean, testable, and maintainable systems using <strong>Spring Boot, Spring Security, MySQL, and ReactJS</strong>, following industry-standard REST architectural patterns.
               </p>
               <p className="about-text">
-                Through my internship at <strong>Codveda Technologies</strong> and hands-on projects like the <strong>AI Integrated Online Coding Platform</strong>, I have gained real-world experience designing CRUD operations, integrating third-party APIs (Judge0 compilation engine, Google Gemini AI), and writing maintainable code with Maven and Git.
+                Through my internship at <strong>Codveda Technologies</strong> and hands-on projects such as the <strong>AI Integrated Online Coding Platform</strong>, I have gained practical experience implementing JWT authentication, integrating external services (Judge0 compilation engine, Google Gemini AI), and managing collaborative Git workflows.
               </p>
             </div>
 
-            {/* Quick Elevated Metrics Cards */}
+            {/* Elevated Highlights */}
             <div className="about-metrics">
               <div className="metric-box card">
                 <span className="metric-number">{cgpa}</span>
@@ -71,9 +74,9 @@ export default function About({ profile }) {
                 <Server size={22} />
               </div>
               <div className="feature-text-content">
-                <h3 className="feature-title">Backend & REST APIs</h3>
+                <h3 className="feature-title">Backend Architecture & REST APIs</h3>
                 <p className="feature-desc">
-                  Developing high-performance RESTful APIs with Spring Boot, Spring Security, JWT authentication, and structured validation.
+                  Building modular RESTful APIs using Spring Boot, Spring Security with stateless JWT authorization, request validation, and clean controller-service-repository patterns.
                 </p>
               </div>
             </div>
@@ -83,21 +86,21 @@ export default function About({ profile }) {
                 <Database size={22} />
               </div>
               <div className="feature-text-content">
-                <h3 className="feature-title">Database & Persistence</h3>
+                <h3 className="feature-title">Database Design & Persistence</h3>
                 <p className="feature-desc">
-                  Designing relational schemas in MySQL, writing optimized SQL queries, and utilizing Spring Data JPA for persistent data integrity.
+                  Structuring relational database schemas in MySQL, query optimization, indexing, and leveraging Spring Data JPA / Hibernate for transactional integrity.
                 </p>
               </div>
             </div>
 
             <div className="card about-feature-card">
               <div className="feature-icon-wrapper">
-                <Code size={22} />
+                <Code2 size={22} />
               </div>
               <div className="feature-text-content">
-                <h3 className="feature-title">Full-Stack Integration</h3>
+                <h3 className="feature-title">Full-Stack Application Development</h3>
                 <p className="feature-desc">
-                  Bridging ReactJS frontends with Spring Boot backends, embedding Monaco Editor IDE support, and integrating real-time compilation engines.
+                  Bridging reactive ReactJS interfaces with secure Spring Boot services, integrating Monaco Editor environments, Judge0 sandbox executors, and AI APIs.
                 </p>
               </div>
             </div>

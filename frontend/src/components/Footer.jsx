@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Mail, Phone, Lock, Heart } from 'lucide-react';
+import { ArrowUp, Mail, Phone, Code2 } from 'lucide-react';
 import { Github, Linkedin } from './Icons';
 
 export default function Footer({ profile }) {
@@ -14,9 +14,12 @@ export default function Footer({ profile }) {
       <div className="container footer-content">
         <div className="footer-top">
           <div className="footer-brand">
-            <h3 className="footer-name">{profile?.name || 'Sanjay Ashwin'}</h3>
+            <div className="footer-brand-title">
+              <span className="brand-badge"><Code2 size={16} /></span>
+              <h3 className="footer-name">{profile?.name || 'Sanjay Ashwin'}</h3>
+            </div>
             <p className="footer-bio">
-              Computer Science Engineering student specializing in full-stack Java, Spring Boot, and scalable web architectures.
+              Computer Science & Engineering student specializing in full-stack Java, Spring Boot 3, REST API architecture, and modern web applications.
             </p>
           </div>
 
@@ -28,6 +31,8 @@ export default function Footer({ profile }) {
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#experience">Experience</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#certifications">Certifications</a></li>
                 <li><a href="#contact">Contact</a></li>
               </ul>
             </div>
@@ -38,7 +43,7 @@ export default function Footer({ profile }) {
                 {(profile?.githubUrl || profile?.github) && (
                   <li>
                     <a href={profile.githubUrl || profile.github} target="_blank" rel="noopener noreferrer">
-                      <Github size={16} />
+                      <Github size={15} />
                       <span>GitHub</span>
                     </a>
                   </li>
@@ -46,7 +51,7 @@ export default function Footer({ profile }) {
                 {(profile?.linkedinUrl || profile?.linkedin) && (
                   <li>
                     <a href={profile.linkedinUrl || profile.linkedin} target="_blank" rel="noopener noreferrer">
-                      <Linkedin size={16} />
+                      <Linkedin size={15} />
                       <span>LinkedIn</span>
                     </a>
                   </li>
@@ -54,15 +59,15 @@ export default function Footer({ profile }) {
                 {profile?.email && (
                   <li>
                     <a href={`mailto:${profile.email}`}>
-                      <Mail size={16} />
+                      <Mail size={15} />
                       <span>{profile.email}</span>
                     </a>
                   </li>
                 )}
                 {profile?.phone && (
                   <li>
-                    <a href={`tel:${profile.phone}`}>
-                      <Phone size={16} />
+                    <a href={`tel:${profile.phone.replace(/\s+/g, '')}`}>
+                      <Phone size={15} />
                       <span>{profile.phone}</span>
                     </a>
                   </li>
@@ -74,7 +79,7 @@ export default function Footer({ profile }) {
 
         <div className="footer-bottom">
           <div className="footer-copy">
-            <p>© {currentYear} Sanjay Ashwin. All rights reserved.</p>
+            <p>© {currentYear} Sanjay Ashwin P. Engineered with React & Spring Boot.</p>
           </div>
 
           <div className="footer-actions">
@@ -82,9 +87,9 @@ export default function Footer({ profile }) {
               type="button"
               onClick={scrollToTop}
               className="back-to-top-btn"
-              aria-label="Back to top"
+              aria-label="Scroll back to top"
             >
-              <ArrowUp size={16} />
+              <ArrowUp size={15} />
               <span>Back to Top</span>
             </button>
           </div>

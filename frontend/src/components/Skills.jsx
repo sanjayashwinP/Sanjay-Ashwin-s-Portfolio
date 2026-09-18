@@ -6,8 +6,7 @@ import {
   Database,
   Wrench,
   Cloud,
-  Cpu,
-  CheckCircle2
+  Cpu
 } from 'lucide-react';
 
 export default function Skills({ skillsByCategory }) {
@@ -17,19 +16,19 @@ export default function Skills({ skillsByCategory }) {
   const getCategoryIcon = (category) => {
     switch (category?.toLowerCase()) {
       case 'languages':
-        return <Code2 size={18} />;
+        return <Code2 size={16} />;
       case 'backend':
-        return <Server size={18} />;
+        return <Server size={16} />;
       case 'frontend':
-        return <Layout size={18} />;
+        return <Layout size={16} />;
       case 'database':
-        return <Database size={18} />;
+        return <Database size={16} />;
       case 'tools':
-        return <Wrench size={18} />;
+        return <Wrench size={16} />;
       case 'cloud':
-        return <Cloud size={18} />;
+        return <Cloud size={16} />;
       default:
-        return <Cpu size={18} />;
+        return <Cpu size={16} />;
     }
   };
 
@@ -45,10 +44,13 @@ export default function Skills({ skillsByCategory }) {
     <section className="section skills-section" id="skills">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">02 // Capabilities</span>
-          <h2 className="section-title">Technical Skills</h2>
+          <span className="section-tag">
+            <Cpu size={14} />
+            <span>Technical Capabilities</span>
+          </span>
+          <h2 className="section-title">Skills & Technologies</h2>
           <p className="section-subtitle">
-            Technologies, frameworks, and developer tools applied across academic projects and practical internship experience.
+            A comprehensive overview of backend frameworks, programming languages, databases, and development tooling I work with daily.
           </p>
         </div>
 

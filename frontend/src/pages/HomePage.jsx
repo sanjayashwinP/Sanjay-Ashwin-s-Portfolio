@@ -15,7 +15,7 @@ import { Layers, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   const [data, setData] = useState(defaultPortfolioData);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
@@ -92,10 +92,10 @@ export default function HomePage() {
         <section id="projects" className="section projects-section">
           <div className="container">
             <div className="section-header">
-              <div className="section-tag">
+              <span className="section-tag">
                 <Layers size={14} />
                 <span>Featured Engineering Work</span>
-              </div>
+              </span>
               <h2 className="section-title">Projects & Systems</h2>
               <p className="section-subtitle">
                 Production-grade applications and technical prototypes demonstrating end-to-end full-stack development, API design, and third-party integrations.

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X, FileDown, Lock, Code2 } from 'lucide-react';
+import { Sun, Moon, Menu, X, FileDown, Code2 } from 'lucide-react';
 
 export default function Navbar({ profile }) {
   const { theme, toggleTheme } = useTheme();
@@ -14,6 +14,15 @@ export default function Navbar({ profile }) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [mobileMenuOpen]);
 
   const navLinks = [
     { name: 'About', href: '#about' },
@@ -59,7 +68,7 @@ export default function Navbar({ profile }) {
             download="Sanjay_Ashwin_Resume.pdf"
             aria-label="Download Sanjay Ashwin Resume PDF"
           >
-            <FileDown size={15} />
+            <FileDown size={14} />
             <span>Resume</span>
           </a>
 
@@ -71,56 +80,72 @@ export default function Navbar({ profile }) {
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
           </button>
-
-
 
           {/* Mobile Menu Toggle */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="icon-btn mobile-menu-toggle"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu & Overlay */}
       {mobileMenuOpen && (
-        <div className="mobile-menu-drawer" id="mobileMenu">
-          <nav aria-label="Mobile Navigation">
-            <ul className="mobile-nav-list">
-              {navLinks.map((link) => (
-                <li key={link.name}>
+        <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}>
+          <div
+            className="mobile-menu-drawer"
+            id="mobileMenu"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mobile-menu-header">
+              <span className="mobile-brand">{profile?.name || 'Sanjay Ashwin'}</span>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="icon-btn"
+                aria-label="Close menu"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <nav aria-label="Mobile Navigation">
+              <ul className="mobile-nav-list">
+                {navLinks.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="mobile-nav-link"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+                <li className="mobile-nav-divider"></li>
+                <li>
                   <a
-                    href={link.href}
-                    className="mobile-nav-link"
+                    href={resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary mobile-resume-btn"
+                    download="Sanjay_Ashwin_Resume.pdf"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {link.name}
+                    <FileDown size={16} />
+                    <span>Download Resume PDF</span>
                   </a>
                 </li>
-              ))}
-              <li className="mobile-nav-divider"></li>
-              <li>
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary mobile-resume-btn"
-                  download="Sanjay_Ashwin_Resume.pdf"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <FileDown size={16} />
-                  Download Resume
-                </a>
-              </li>
-            </ul>
-          </nav>
+              </ul>
+            </nav>
+          </div>
         </div>
       )}
     </header>

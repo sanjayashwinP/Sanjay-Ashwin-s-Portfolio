@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
+import { Briefcase, Calendar, MapPin } from 'lucide-react';
 
 export default function Experience({ experienceList }) {
   if (!experienceList || experienceList.length === 0) return null;
@@ -8,10 +8,13 @@ export default function Experience({ experienceList }) {
     <section className="section experience-section" id="experience">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">03 // Experience</span>
-          <h2 className="section-title">Work & Internship</h2>
+          <span className="section-tag">
+            <Briefcase size={14} />
+            <span>Practical Experience</span>
+          </span>
+          <h2 className="section-title">Work & Internships</h2>
           <p className="section-subtitle">
-            Hands-on software development experience building backend applications, RESTful services, and database pipelines.
+            Hands-on software development experience building backend applications, RESTful services, and database integration.
           </p>
         </div>
 
@@ -26,7 +29,7 @@ export default function Experience({ experienceList }) {
               <div key={exp.id || index} className="timeline-item">
                 <div className="timeline-marker">
                   <div className="marker-dot">
-                    <Briefcase size={14} />
+                    <Briefcase size={15} />
                   </div>
                   {index < experienceList.length - 1 && <div className="marker-line"></div>}
                 </div>
@@ -41,12 +44,12 @@ export default function Experience({ experienceList }) {
                     <div className="exp-meta-pills">
                       <span className="badge badge-accent font-mono">
                         <Calendar size={13} />
-                        {exp.startDate} – {exp.endDate}
+                        <span>{exp.startDate} – {exp.endDate}</span>
                       </span>
                       {exp.location && (
                         <span className="badge font-mono">
                           <MapPin size={13} />
-                          {exp.location}
+                          <span>{exp.location}</span>
                         </span>
                       )}
                     </div>
