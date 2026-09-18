@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Mail, FileDown, Sparkles, Coffee, Music, Dice5, HelpCircle, RotateCcw } from 'lucide-react';
+import { 
+  ArrowRight, Mail, FileDown, 
+  Code2, Briefcase, FolderGit2, GraduationCap, FileText, 
+  RotateCcw 
+} from 'lucide-react';
 import { Github, Linkedin } from './Icons';
 
 export default function Hero({ profile }) {
@@ -24,26 +28,10 @@ export default function Hero({ profile }) {
     return trimmed;
   };
 
-  // Unique Non-Project Developer Quotes
-  const quotes = [
-    '"First, solve the problem. Then, write the code." — John Johnson',
-    '"Simplicity is prerequisite for reliability." — Edsger W. Dijkstra',
-    '"Make it work, make it right, make it fast." — Kent Beck',
-    '"Code is like humor. When you have to explain it, it’s bad." — Cory House',
-    '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler'
-  ];
-
-  const tracks = [
-    '🎵 Lofi Beats to Code/Relax to (ChilledCow / Lofi Girl)',
-    '🎧 Synthwave Chill / Retrowave Instrumental',
-    '☕ Coffee Shop Ambient Jazz & Coding Flow',
-    '🚀 Hans Zimmer - Interstellar OST / Focus Engine'
-  ];
-
-  // Terminal history & state
+  // Terminal history & state initialized with resume profile summary
   const [terminalHistory, setTerminalHistory] = useState([
     { type: 'ascii', content: 'ascii-banner' },
-    { type: 'sysinfo', content: 'initial-sysinfo' }
+    { type: 'overview', content: 'initial-overview' }
   ]);
   const [inputVal, setInputVal] = useState('');
   const terminalBottomRef = useRef(null);
@@ -71,56 +59,126 @@ export default function Hero({ profile }) {
     let output = null;
 
     switch (cleanCmd) {
-      case 'coffee':
-      case 'brew':
+      case 'skills':
+      case 'skill':
+      case 'tech':
+      case 'stack':
         output = {
-          type: 'coffee',
-          text: `[Brewing...] 100% Arabica beans ground.\nWater heated to 94°C.\nExtraction complete!\n\n   ( (\n    ) )\n  ........\n  |      |]\n  \\      /\n   \`----\nFresh espresso brewed! Coffee Level: 100% ☕`
+          type: 'skills',
+          title: 'Technical Skills & Core Stack',
+          sections: [
+            { label: 'Backend Core', items: 'Java 21, Spring Boot 3, Spring Security, REST APIs, JWT Authentication' },
+            { label: 'Database & ORM', items: 'MySQL, JPA / Hibernate, Relational Data Modeling, CRUD' },
+            { label: 'Frontend', items: 'ReactJS, JavaScript (ES6+), HTML5, CSS3, Responsive UI' },
+            { label: 'Architecture', items: 'Object-Oriented Programming (OOP), Java Collections, Microservices' },
+            { label: 'Dev Tools & Cloud', items: 'Git, GitHub, Maven, Postman, AWS Cloud Foundations, IntelliJ, VS Code' }
+          ]
         };
         break;
-      case 'quote':
-      case 'wisdom':
-        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+      case 'experience':
+      case 'internship':
+      case 'work':
         output = {
-          type: 'quote',
-          text: `💡 Engineering Philosophy:\n${randomQuote}`
+          type: 'experience',
+          title: 'Professional Experience',
+          company: 'Codveda Technologies',
+          role: 'Java Development Intern',
+          period: 'June 2026 – July 2026',
+          location: 'Chennai, India',
+          points: [
+            'Engineered scalable RESTful APIs with Spring Boot and Java for core backend services.',
+            'Implemented robust CRUD operations and integrated MySQL databases via JPA/Hibernate.',
+            'Applied OOP principles and Java Collections Framework for modular, clean architecture.',
+            'Conducted thorough API verification and automated endpoint testing using Postman and Maven.'
+          ]
         };
         break;
-      case 'music':
-      case 'vibe':
-      case 'soundtrack':
-        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+
+      case 'projects':
+      case 'project':
+      case 'flagship':
         output = {
-          type: 'music',
-          text: `Current Audio Stream:\n${randomTrack}\nStatus: Playing • 128kbps stereo`
+          type: 'projects',
+          title: 'Featured Project: AI Integrated Online Coding Platform',
+          year: '2025',
+          tech: 'ReactJS, Spring Boot, Judge0 API, Google Gemini API, Monaco Editor, REST APIs',
+          points: [
+            'Integrated Judge0 API to enable secure, real-time remote compilation across languages.',
+            'Implemented Gemini AI API to provide intelligent error explanations and automated hints.',
+            'Built Spring Boot backend REST APIs to coordinate compiler jobs and manage submissions.',
+            'Embedded Monaco Editor in React for an IDE-grade user experience with syntax highlighting.'
+          ],
+          repo: 'https://github.com/sanjayashwinP'
         };
         break;
-      case 'roll':
-      case 'dice':
-        const rollVal = Math.floor(Math.random() * 20) + 1;
-        const msg = rollVal === 20 ? 'CRITICAL HIT! (Natural 20) 🎯' : rollVal === 1 ? 'Critical fumble! (Natural 1) 😅' : `You rolled: ${rollVal} on a D20.`;
+
+      case 'education':
+      case 'academic':
+      case 'college':
         output = {
-          type: 'roll',
-          text: `🎲 ${msg}`
+          type: 'education',
+          title: 'Academic Credentials',
+          institution: 'Saveetha Engineering College',
+          degree: 'Bachelor of Engineering (B.E.)',
+          major: 'Computer Science and Engineering',
+          period: '2023 – 2027',
+          cgpa: '8.4 / 10.0',
+          location: 'Chennai, India',
+          certifications: 'AWS Academy Cloud Foundations • Prompt Engineering (Simplilearn)'
         };
         break;
-      case 'sysinfo':
-      case 'neofetch':
+
+      case 'resume':
+      case 'cv':
+      case 'pdf':
         output = {
-          type: 'sysinfo',
-          content: 'user-sysinfo'
+          type: 'resume',
+          title: 'Resume Overview — Sanjay Ashwin P',
+          summary: 'Java & Full-Stack Developer with strong backend foundation in Spring Boot, Spring Security, REST APIs, and modern React.',
+          education: 'B.E. CSE @ Saveetha Engineering College (CGPA: 8.4)',
+          experience: 'Java Dev Intern @ Codveda Technologies',
+          file: 'Sanjay_Ashwin_Resume.pdf',
+          hint: 'Click "Resume PDF" in the hero header to download the verified PDF.'
         };
         break;
-      case 'help':
+
+      case 'contact':
+      case 'email':
+      case 'socials':
+        output = {
+          type: 'contact',
+          title: 'Direct Contact Channels',
+          items: [
+            { label: 'Email', val: 'sanjayashwin502@gmail.com' },
+            { label: 'LinkedIn', val: 'linkedin.com/in/sanjay-ashwin-62b566376' },
+            { label: 'GitHub', val: 'github.com/sanjayashwinP' },
+            { label: 'Phone', val: '+91-8870794020' },
+            { label: 'Location', val: 'Chennai, Tamil Nadu, India' }
+          ]
+        };
+        break;
+
+      case 'whoami':
+      case 'bio':
+      case 'about':
         output = {
           type: 'text',
-          text: `Available interactive commands:\n  coffee     - Brew a virtual espresso cup ☕\n  quote      - Display an inspiring engineering quote 💡\n  music      - Check current coding soundtrack 🎧\n  roll       - Roll a 20-sided polyhedral die 🎲\n  sysinfo    - Print developer workstation profile ⚡\n  clear      - Clear the console screen 🧹`
+          text: `Sanjay Ashwin P — Computer Science and Engineering undergraduate & Java Full-Stack Developer specializing in Spring Boot microservices, secure REST APIs, and React interfaces.`
         };
         break;
+
+      case 'help':
+        output = {
+          type: 'help',
+          text: `Available interactive commands:\n  skills      - Technical skills and stack breakdown ⚡\n  experience  - Codveda Technologies internship details 💼\n  projects    - AI coding platform & architecture 🚀\n  education   - Saveetha Engineering College & CGPA 🎓\n  resume      - Resume summary & download info 📄\n  contact     - Direct contact channels & links 📬\n  whoami      - Professional bio and profile overview 👤\n  clear       - Clear the terminal console 🧹`
+        };
+        break;
+
       default:
         output = {
           type: 'error',
-          text: `Command not found: "${cleanCmd}". Type "help" or click one of the preset pills above.`
+          text: `Command not recognized: "${cleanCmd}". Type "help" or click one of the quick chips above.`
         };
         break;
     }
@@ -149,21 +207,15 @@ export default function Hero({ profile }) {
               {avatarUrl ? (
                 <div className="hero-avatar-frame">
                   <img src={avatarUrl} alt={name} className="hero-avatar-img" />
-                  <span className="hero-avatar-status" title="Open for SDE Roles & Internships"></span>
                 </div>
               ) : (
                 <div className="hero-avatar-placeholder">
                   <span className="hero-avatar-initials">SA</span>
-                  <span className="hero-avatar-status" title="Open for SDE Roles & Internships"></span>
                 </div>
               )}
             </div>
 
             <div className="hero-profile-meta">
-              <div className="hero-status-pill">
-                <span className="status-indicator-dot"></span>
-                <span>Open for SDE Roles & Internships</span>
-              </div>
               <div className="hero-meta-details">
                 <div className="hero-meta-workplace">
                   Saveetha Engineering College • <span className="font-mono">CGPA 8.4</span>
@@ -247,7 +299,7 @@ export default function Hero({ profile }) {
           </div>
         </div>
 
-        {/* Right Column: Unique Interactive Developer Console (Zero Project Info) */}
+        {/* Right Column: Professional Dev Console (Useful Resume & Engineering Data) */}
         <div className="hero-visual">
           <div className="terminal-card card">
             {/* Window Header */}
@@ -258,10 +310,10 @@ export default function Hero({ profile }) {
                 <span className="dot green"></span>
               </div>
               <div className="terminal-title font-mono">
-                sanjay@workstation: ~ (zsh)
+                sanjay@workstation: ~ (sanjay-cli)
               </div>
               <div className="terminal-badge font-mono">
-                live ⚡
+                resume-shell v2.4 ⚡
               </div>
             </div>
 
@@ -270,47 +322,56 @@ export default function Hero({ profile }) {
               <button
                 type="button"
                 className="term-chip"
-                onClick={() => executeCommand('coffee')}
-                title="Brew virtual espresso"
+                onClick={() => executeCommand('skills')}
+                title="View Technical Skills & Stack"
               >
-                <Coffee size={12} />
-                <span>coffee</span>
+                <Code2 size={12} />
+                <span>skills</span>
               </button>
               <button
                 type="button"
                 className="term-chip"
-                onClick={() => executeCommand('quote')}
-                title="Generate wisdom quote"
+                onClick={() => executeCommand('experience')}
+                title="View Work Experience & Internship"
               >
-                <Sparkles size={12} />
-                <span>quote</span>
+                <Briefcase size={12} />
+                <span>experience</span>
               </button>
               <button
                 type="button"
                 className="term-chip"
-                onClick={() => executeCommand('music')}
-                title="Coding soundtrack"
+                onClick={() => executeCommand('projects')}
+                title="View Featured Projects"
               >
-                <Music size={12} />
-                <span>music</span>
+                <FolderGit2 size={12} />
+                <span>projects</span>
               </button>
               <button
                 type="button"
                 className="term-chip"
-                onClick={() => executeCommand('roll')}
-                title="Roll a 20-sided die"
+                onClick={() => executeCommand('education')}
+                title="View Academic Credentials & CGPA"
               >
-                <Dice5 size={12} />
-                <span>roll</span>
+                <GraduationCap size={12} />
+                <span>education</span>
               </button>
               <button
                 type="button"
                 className="term-chip"
-                onClick={() => executeCommand('help')}
-                title="List all commands"
+                onClick={() => executeCommand('resume')}
+                title="View Resume Summary"
               >
-                <HelpCircle size={12} />
-                <span>help</span>
+                <FileText size={12} />
+                <span>resume</span>
+              </button>
+              <button
+                type="button"
+                className="term-chip"
+                onClick={() => executeCommand('contact')}
+                title="View Contact Channels"
+              >
+                <Mail size={12} />
+                <span>contact</span>
               </button>
               <button
                 type="button"
@@ -340,16 +401,35 @@ export default function Hero({ profile }) {
                   );
                 }
 
-                if (item.type === 'sysinfo') {
+                if (item.type === 'overview') {
                   return (
-                    <div key={idx} className="term-sysinfo-block">
-                      <div className="sysinfo-line"><span className="sys-key">user</span>     <span className="sys-val">sanjay ashwin</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">role</span>     <span className="sys-val">software developer</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">shell</span>    <span className="sys-val">zsh 5.9 (x86_64-devbox)</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">editors</span>  <span className="sys-val">intellij idea & vs code</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">fuel</span>     <span className="sys-val amber-highlight">double espresso ☕ (98%)</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">audio</span>    <span className="sys-val">synthwave & lofi beats 🎧</span></div>
-                      <div className="sysinfo-line"><span className="sys-key">uptime</span>   <span className="sys-val green-highlight">continuous learning & building</span></div>
+                    <div key={idx} className="term-overview-block">
+                      <div className="overview-header">
+                        SANJAY ASHWIN P • Java & Full-Stack Developer
+                      </div>
+                      <div className="overview-sub">
+                        Saveetha Engineering College • CGPA: 8.4 • Chennai, India
+                      </div>
+                      <div className="overview-divider"></div>
+                      <div className="overview-row">
+                        <span className="overview-key">Internship</span>
+                        <span className="overview-val">Java Dev Intern @ Codveda Technologies</span>
+                      </div>
+                      <div className="overview-row">
+                        <span className="overview-key">Core Stack</span>
+                        <span className="overview-val amber-highlight">Java 21 • Spring Boot 3 • MySQL • ReactJS • REST APIs</span>
+                      </div>
+                      <div className="overview-row">
+                        <span className="overview-key">Flagship</span>
+                        <span className="overview-val">AI Integrated Online Coding Platform (Judge0 + Gemini)</span>
+                      </div>
+                      <div className="overview-row">
+                        <span className="overview-key">Certifications</span>
+                        <span className="overview-val green-highlight">AWS Cloud Foundations • Prompt Engineering</span>
+                      </div>
+                      <div className="overview-hint">
+                        💡 Click a chip above or type <span className="amber-highlight">skills</span>, <span className="amber-highlight">experience</span>, or <span className="amber-highlight">projects</span>
+                      </div>
                     </div>
                   );
                 }
@@ -359,6 +439,104 @@ export default function Hero({ profile }) {
                     <div key={idx} className="term-input-echo">
                       <span className="term-prompt">sanjay@workstation:~$</span>
                       <span className="term-cmd-text">{item.cmd}</span>
+                    </div>
+                  );
+                }
+
+                if (item.type === 'skills') {
+                  return (
+                    <div key={idx} className="term-output-block skills">
+                      <div className="term-section-title">⚡ {item.title}</div>
+                      {item.sections.map((sec, sIdx) => (
+                        <div key={sIdx} className="term-skill-row">
+                          <span className="term-skill-label">{sec.label}:</span>
+                          <span className="term-skill-items">{sec.items}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+
+                if (item.type === 'experience') {
+                  return (
+                    <div key={idx} className="term-output-block experience">
+                      <div className="term-section-title">💼 {item.title}</div>
+                      <div className="term-company-header">
+                        <span className="amber-highlight">{item.company}</span> — {item.role}
+                      </div>
+                      <div className="term-sub-detail">{item.period} • {item.location}</div>
+                      <ul className="term-bullet-list">
+                        {item.points.map((pt, pIdx) => (
+                          <li key={pIdx}>▹ {pt}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                }
+
+                if (item.type === 'projects') {
+                  return (
+                    <div key={idx} className="term-output-block projects">
+                      <div className="term-section-title">🚀 {item.title}</div>
+                      <div className="term-sub-detail"><span className="amber-highlight">Tech:</span> {item.tech}</div>
+                      <ul className="term-bullet-list">
+                        {item.points.map((pt, pIdx) => (
+                          <li key={pIdx}>▹ {pt}</li>
+                        ))}
+                      </ul>
+                      <div className="term-sub-detail">
+                        🔗 Codebase: <a href={item.repo} target="_blank" rel="noopener noreferrer" className="term-link">{item.repo}</a>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (item.type === 'education') {
+                  return (
+                    <div key={idx} className="term-output-block education">
+                      <div className="term-section-title">🎓 {item.title}</div>
+                      <div className="term-company-header"><span className="amber-highlight">{item.institution}</span></div>
+                      <div className="term-sub-detail">{item.degree} in {item.major}</div>
+                      <div className="term-sub-detail">{item.period} • {item.location}</div>
+                      <div className="term-sub-detail"><span className="green-highlight">Academic Performance:</span> CGPA {item.cgpa}</div>
+                      <div className="term-sub-detail"><span className="amber-highlight">Certifications:</span> {item.certifications}</div>
+                    </div>
+                  );
+                }
+
+                if (item.type === 'resume') {
+                  return (
+                    <div key={idx} className="term-output-block resume">
+                      <div className="term-section-title">📄 {item.title}</div>
+                      <p className="term-resume-desc">{item.summary}</p>
+                      <div className="term-sub-detail">• <span className="amber-highlight">Education:</span> {item.education}</div>
+                      <div className="term-sub-detail">• <span className="amber-highlight">Experience:</span> {item.experience}</div>
+                      <div className="term-sub-detail">• <span className="amber-highlight">File:</span> {item.file}</div>
+                      <div className="term-resume-cta">
+                        <a 
+                          href={resumeUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="term-action-btn"
+                          download="Sanjay_Ashwin_Resume.pdf"
+                        >
+                          ⬇️ Open / Download Resume PDF
+                        </a>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (item.type === 'contact') {
+                  return (
+                    <div key={idx} className="term-output-block contact">
+                      <div className="term-section-title">📬 {item.title}</div>
+                      {item.items.map((ci, cIdx) => (
+                        <div key={cIdx} className="term-contact-row">
+                          <span className="term-contact-label">{ci.label}:</span>
+                          <span className="term-contact-val">{ci.val}</span>
+                        </div>
+                      ))}
                     </div>
                   );
                 }
@@ -378,7 +556,7 @@ export default function Hero({ profile }) {
                   value={inputVal}
                   onChange={(e) => setInputVal(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="type 'coffee', 'quote', 'music', 'roll'..."
+                  placeholder="type 'skills', 'experience', 'projects', 'resume'..."
                   className="term-input-field"
                   autoComplete="off"
                   spellCheck="false"
