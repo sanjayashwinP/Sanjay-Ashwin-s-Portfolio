@@ -26,7 +26,12 @@ export default function ProtectedRoute({ children, onNavigate }) {
   }
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="admin-loading-container" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
+        <Loader2 size={32} className="spin-icon" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Redirecting to login...</p>
+      </div>
+    );
   }
 
   return children;

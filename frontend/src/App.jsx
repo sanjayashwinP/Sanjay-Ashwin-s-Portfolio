@@ -27,12 +27,14 @@ function AppContent() {
     }
   };
 
-  // Route matching
-  if (currentPath === '/admin' || currentPath === '/admin/login') {
+  // Route matching (handle trailing slashes and normalize)
+  const cleanPath = (currentPath || '').replace(/\/+$/, '') || '/';
+
+  if (cleanPath === '/admin' || cleanPath === '/admin/login') {
     return <AdminLoginPage onNavigate={navigate} />;
   }
 
-  if (currentPath === '/admin/dashboard') {
+  if (cleanPath === '/admin/dashboard') {
     return (
       <ProtectedRoute onNavigate={navigate}>
         <AdminDashboardPage onNavigate={navigate} />

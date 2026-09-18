@@ -1,16 +1,32 @@
 // Base API Client Wrapper
 
 // Automatically handle URLs whether user provides with or without /api or trailing slashes
-const rawBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api').trim().replace(/\/+$/, '');
-const BASE_URL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
+export function getApiBaseUrl() {
+  const custom = typeof window !== 'undefined' ? localStorage.getItem('portfolio_api_url') : null;
+  const raw = (custom || import.meta.env.VITE_API_URL || 'http://localhost:8080/api').trim().replace(/\/+$/, '');
+  return raw.endsWith('/api') ? raw : `${raw}/api`;
+}
+
+export function setApiBaseUrl(newUrl) {
+  if (typeof window !== 'undefined') {
+    if (!newUrl || newUrl.trim() === '') {
+      localStorage.removeItem('portfolio_api_url');
+    } else {
+      let clean = newUrl.trim().replace(/\/+$/, '');
+      if (!clean.endsWith('/api')) clean = `${clean}/api`;
+      localStorage.setItem('portfolio_api_url', clean);
+    }
+  }
+}
 
 export async function request(endpoint, options = {}) {
   let cleanEndpoint = endpoint.startsWith('/api/') ? endpoint.substring(4) : endpoint;
   if (!cleanEndpoint.startsWith('/')) {
     cleanEndpoint = `/${cleanEndpoint}`;
   }
-  const url = `${BASE_URL}${cleanEndpoint}`;
-  const token = localStorage.getItem('portfolio_token');
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}${cleanEndpoint}`;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('portfolio_token') : null;
 
   const headers = {
     'Content-Type': 'application/json',

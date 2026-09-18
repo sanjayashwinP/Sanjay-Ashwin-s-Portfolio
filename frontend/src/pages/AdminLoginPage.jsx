@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Lock, User, KeyRound, AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { getApiBaseUrl, setApiBaseUrl } from '../services/api';
+import { Lock, User, KeyRound, AlertCircle, ArrowLeft, Loader2, Settings, Check, ExternalLink, LogOut } from 'lucide-react';
 
 export default function AdminLoginPage({ onNavigate }) {
-  const { login, isAuthenticated } = useAuth();
+  const { user, login, logout, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // API Config state
+  const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
+  const [showApiConfig, setShowApiConfig] = useState(false);
+  const [apiUrlSaved, setApiUrlSaved] = useState(false);
 
   // Check if redirected due to expired session
   useEffect(() => {
@@ -15,18 +21,6 @@ export default function AdminLoginPage({ onNavigate }) {
       setError('Your admin session expired. Please log in again to update server content.');
     }
   }, []);
-
-  // Safely redirect if authenticated via useEffect (prevents React render-phase update warnings)
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (onNavigate) {
-        onNavigate('/admin/dashboard');
-      } else {
-        window.history.pushState({}, '', '/admin/dashboard');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      }
-    }
-  }, [isAuthenticated, onNavigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,11 +42,27 @@ export default function AdminLoginPage({ onNavigate }) {
     }
   };
 
+  const handleSaveApiUrl = (e) => {
+    e.preventDefault();
+    setApiBaseUrl(apiUrl);
+    setApiUrlSaved(true);
+    setTimeout(() => setApiUrlSaved(false), 3000);
+  };
+
   const handleBackToPortfolio = () => {
     if (onNavigate) {
       onNavigate('/');
     } else {
       window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    if (onNavigate) {
+      onNavigate('/admin/dashboard');
+    } else {
+      window.history.pushState({}, '', '/admin/dashboard');
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
@@ -87,57 +97,144 @@ export default function AdminLoginPage({ onNavigate }) {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="admin-login-form">
-            <div className="form-group">
-              <label htmlFor="adminUsername">Username</label>
-              <div className="input-with-icon">
-                <User size={18} className="field-icon" />
-                <input
-                  id="adminUsername"
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="admin"
-                  autoComplete="username"
-                />
+          {isAuthenticated ? (
+            <div style={{ textAlign: 'center', padding: '1.25rem 0' }}>
+              <div style={{ marginBottom: '1.25rem', padding: '1rem', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.35rem' }}>
+                  Active session found:
+                </p>
+                <p style={{ color: 'var(--accent-primary)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                  {user?.username || 'admin'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={handleGoToDashboard}
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <ExternalLink size={16} />
+                  <span>Enter Admin Dashboard</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    setError(null);
+                  }}
+                  className="btn btn-secondary"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <LogOut size={16} />
+                  <span>Sign Out / Switch Account</span>
+                </button>
               </div>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="adminPassword">Password</label>
-              <div className="input-with-icon">
-                <KeyRound size={18} className="field-icon" />
-                <input
-                  id="adminPassword"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter administrator password"
-                  autoComplete="current-password"
-                />
+          ) : (
+            <form onSubmit={handleSubmit} className="admin-login-form">
+              <div className="form-group">
+                <label htmlFor="adminUsername">Username</label>
+                <div className="input-with-icon">
+                  <User size={18} className="field-icon" />
+                  <input
+                    id="adminUsername"
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="admin"
+                    autoComplete="username"
+                  />
+                </div>
               </div>
-            </div>
 
+              <div className="form-group">
+                <label htmlFor="adminPassword">Password</label>
+                <div className="input-with-icon">
+                  <KeyRound size={18} className="field-icon" />
+                  <input
+                    id="adminPassword"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter administrator password"
+                    autoComplete="current-password"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn btn-primary admin-submit-btn"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={18} className="spin-icon" />
+                    <span>Authenticating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock size={16} />
+                    <span>Sign In to Dashboard</span>
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* Backend API Configuration Toggle */}
+          <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', textAlign: 'center' }}>
             <button
-              type="submit"
-              disabled={submitting}
-              className="btn btn-primary admin-submit-btn"
+              type="button"
+              onClick={() => setShowApiConfig(!showApiConfig)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-muted)',
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
             >
-              {submitting ? (
-                <>
-                  <Loader2 size={18} className="spin-icon" />
-                  <span>Authenticating...</span>
-                </>
-              ) : (
-                <>
-                  <Lock size={16} />
-                  <span>Sign In to Dashboard</span>
-                </>
-              )}
+              <Settings size={14} />
+              <span>Backend API Server Settings</span>
             </button>
-          </form>
+
+            {showApiConfig && (
+              <form onSubmit={handleSaveApiUrl} style={{ marginTop: '1rem', textAlign: 'left' }}>
+                <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+                  <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                    Backend Base API URL
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    value={apiUrl}
+                    onChange={(e) => setApiUrl(e.target.value)}
+                    placeholder="https://your-backend.onrender.com/api"
+                    style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <button type="submit" className="btn btn-secondary btn-sm" style={{ fontSize: '0.78rem' }}>
+                    Save API URL
+                  </button>
+                  {apiUrlSaved && (
+                    <span style={{ color: 'var(--success)', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Check size={14} /> Saved!
+                    </span>
+                  )}
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </div>

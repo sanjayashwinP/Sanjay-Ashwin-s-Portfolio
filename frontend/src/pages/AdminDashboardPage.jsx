@@ -3,13 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { portfolioService, defaultPortfolioData } from '../services/portfolioService';
 import { adminService } from '../services/adminService';
+import { authService } from '../services/authService';
+import { getApiBaseUrl, setApiBaseUrl } from '../services/api';
 import {
   Layers, User, Award, Briefcase, GraduationCap, Mail, CheckCircle2,
   AlertCircle, LogOut, ExternalLink, Plus, Trash2, Edit3, Save, X,
   Sun, Moon, Shield, RefreshCw, Eye, MessageSquare, Sparkles, Upload, Camera
 } from 'lucide-react';
 
-export default function AdminDashboardPage({ onNavigate }) {
+function AdminDashboardContent({ onNavigate }) {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -1770,5 +1772,65 @@ export default function AdminDashboardPage({ onNavigate }) {
         </main>
       </div>
     </div>
+  );
+}
+
+class AdminErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Admin Dashboard Error:", error, errorInfo);
+  }
+
+  handleReset = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('portfolio_token');
+      localStorage.removeItem('portfolio_user');
+      window.location.href = '/admin/login';
+    }
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+          <div className="card" style={{ maxWidth: '520px', width: '100%', padding: '2rem', textAlign: 'center', background: 'var(--bg-surface)' }}>
+            <h2 style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }}>Dashboard Recovered</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem', lineHeight: '1.6' }}>
+              An unexpected issue occurred while rendering the dashboard. You can reload or reset your admin session.
+            </p>
+            {this.state.error?.message && (
+              <pre style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem', marginBottom: '1.5rem', overflowX: 'auto', textAlign: 'left' }}>
+                {this.state.error.message}
+              </pre>
+            )}
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>
+                Reload Page
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={this.handleReset}>
+                Reset Session &amp; Login
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function AdminDashboardPage(props) {
+  return (
+    <AdminErrorBoundary>
+      <AdminDashboardContent {...props} />
+    </AdminErrorBoundary>
   );
 }
