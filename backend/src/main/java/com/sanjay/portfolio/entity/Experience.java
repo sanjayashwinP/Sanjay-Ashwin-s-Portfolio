@@ -22,7 +22,7 @@ public class Experience {
     @Column(name = "start_date", nullable = false, length = 50)
     private String startDate;
 
-    @Column(name = "end_date", nullable = false, length = 50)
+    @Column(name = "end_date", length = 50)
     private String endDate;
 
     @Column(name = "is_current")

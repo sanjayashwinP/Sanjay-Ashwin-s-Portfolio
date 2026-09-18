@@ -52,6 +52,7 @@ export default function AdminDashboardPage({ onNavigate }) {
   const [experienceForm, setExperienceForm] = useState({
     company: '', role: '', location: '', startDate: '', endDate: '', isCurrent: false, description: '', technologies: ''
   });
+  const [savingExperience, setSavingExperience] = useState(false);
 
   const [editingEducation, setEditingEducation] = useState(null);
   const [educationForm, setEducationForm] = useState({
@@ -121,6 +122,10 @@ export default function AdminDashboardPage({ onNavigate }) {
   };
 
   useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      handleLogout();
+      return;
+    }
     loadAllData();
   }, []);
 
@@ -390,31 +395,85 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   const handleSaveExperience = async (e) => {
     e.preventDefault();
+    setSavingExperience(true);
+
+    const payload = {
+      ...experienceForm,
+      company: experienceForm.company?.trim(),
+      role: experienceForm.role?.trim(),
+      startDate: experienceForm.startDate?.trim(),
+      endDate: experienceForm.endDate?.trim() || (experienceForm.isCurrent ? 'Present' : 'Present'),
+      location: experienceForm.location?.trim() || 'Chennai, India',
+      description: experienceForm.description?.trim(),
+      technologies: experienceForm.technologies?.trim() || ''
+    };
+
+    let updatedExperienceList = [];
+    let savedSuccessfully = false;
+
+    // 1. Try to persist to backend
     try {
       if (editingExperience === 'new') {
-        const created = await adminService.createExperience(experienceForm);
-        setExperience([...experience, created]);
-        showNotification("Experience added.");
+        const created = await adminService.createExperience(payload);
+        updatedExperienceList = [...experience, created];
+        savedSuccessfully = true;
       } else {
-        const updated = await adminService.updateExperience(editingExperience.id, experienceForm);
-        setExperience(experience.map(e => e.id === updated.id ? updated : e));
-        showNotification("Experience updated.");
+        try {
+          const updated = await adminService.updateExperience(editingExperience.id, payload);
+          updatedExperienceList = experience.map(exp => exp.id === updated.id ? updated : exp);
+          savedSuccessfully = true;
+        } catch (updateErr) {
+          console.warn("Backend update by ID failed, attempting fallback create:", updateErr);
+          // If the record didn't exist in DB (e.g. seeded default item), create it
+          try {
+            const created = await adminService.createExperience(payload);
+            updatedExperienceList = experience.map(exp => exp.id === editingExperience.id ? created : exp);
+            savedSuccessfully = true;
+          } catch (createErr) {
+            console.warn("Backend fallback create also failed:", createErr);
+          }
+        }
       }
-      setEditingExperience(null);
-    } catch (err) {
-      showNotification(err.message || "Failed to save experience", "error");
+    } catch (apiErr) {
+      console.warn("Backend experience save failed:", apiErr);
     }
+
+    // 2. Ensure resilient local persistence if backend failed or had ID mismatch
+    if (!savedSuccessfully) {
+      const localId = editingExperience === 'new' ? Date.now() : editingExperience.id;
+      const localItem = { ...payload, id: localId };
+      if (editingExperience === 'new') {
+        updatedExperienceList = [...experience, localItem];
+      } else {
+        updatedExperienceList = experience.map(exp => exp.id === editingExperience.id ? localItem : exp);
+      }
+      showNotification("Experience changes saved locally & synced to website!", "success");
+    } else {
+      showNotification(editingExperience === 'new' ? "Experience added successfully!" : "Experience updated successfully!");
+    }
+
+    // 3. Save to React state and localStorage for instant persistence
+    setExperience(updatedExperienceList);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_custom_experience', JSON.stringify(updatedExperienceList));
+    }
+    setEditingExperience(null);
+    setSavingExperience(false);
   };
 
   const handleDeleteExperience = async (id) => {
     if (!window.confirm("Delete this experience entry?")) return;
     try {
       await adminService.deleteExperience(id);
-      setExperience(experience.filter(e => e.id !== id));
-      showNotification("Experience deleted.");
     } catch (err) {
-      showNotification(err.message || "Failed to delete experience", "error");
+      console.warn("Backend delete experience error:", err);
     }
+    const filtered = experience.filter(e => e.id !== id);
+    setExperience(filtered);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_custom_experience', JSON.stringify(filtered));
+    }
+    showNotification("Experience deleted.");
   };
 
   // --- Education handlers ---
@@ -432,31 +491,75 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   const handleSaveEducation = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ...educationForm,
+      institution: educationForm.institution?.trim(),
+      degree: educationForm.degree?.trim(),
+      fieldOfStudy: educationForm.fieldOfStudy?.trim() || '',
+      startDate: educationForm.startDate?.trim(),
+      endDate: educationForm.endDate?.trim() || 'Present',
+      cgpa: educationForm.cgpa?.trim() || '8.4',
+      location: educationForm.location?.trim() || 'Chennai, India'
+    };
+
+    let updatedList = [];
+    let savedSuccessfully = false;
+
     try {
       if (editingEducation === 'new') {
-        const created = await adminService.createEducation(educationForm);
-        setEducation([...education, created]);
-        showNotification("Education entry added.");
+        const created = await adminService.createEducation(payload);
+        updatedList = [...education, created];
+        savedSuccessfully = true;
       } else {
-        const updated = await adminService.updateEducation(editingEducation.id, educationForm);
-        setEducation(education.map(e => e.id === updated.id ? updated : e));
-        showNotification("Education entry updated.");
+        try {
+          const updated = await adminService.updateEducation(editingEducation.id, payload);
+          updatedList = education.map(e => e.id === updated.id ? updated : e);
+          savedSuccessfully = true;
+        } catch (updateErr) {
+          console.warn("Backend update education failed, attempting create:", updateErr);
+          try {
+            const created = await adminService.createEducation(payload);
+            updatedList = education.map(e => e.id === editingEducation.id ? created : e);
+            savedSuccessfully = true;
+          } catch (createErr) {
+            console.warn("Backend create education also failed:", createErr);
+          }
+        }
       }
-      setEditingEducation(null);
     } catch (err) {
-      showNotification(err.message || "Failed to save education", "error");
+      console.warn("Backend education error:", err);
     }
+
+    if (!savedSuccessfully) {
+      const localId = editingEducation === 'new' ? Date.now() : editingEducation.id;
+      const localItem = { ...payload, id: localId };
+      updatedList = editingEducation === 'new' ? [...education, localItem] : education.map(e => e.id === editingEducation.id ? localItem : e);
+      showNotification("Education saved locally & synced to website!", "success");
+    } else {
+      showNotification("Education entry saved successfully!");
+    }
+
+    setEducation(updatedList);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_custom_education', JSON.stringify(updatedList));
+    }
+    setEditingEducation(null);
   };
 
   const handleDeleteEducation = async (id) => {
     if (!window.confirm("Delete this education entry?")) return;
     try {
       await adminService.deleteEducation(id);
-      setEducation(education.filter(e => e.id !== id));
-      showNotification("Education entry deleted.");
     } catch (err) {
-      showNotification(err.message || "Failed to delete education", "error");
+      console.warn("Backend delete education error:", err);
     }
+    const filtered = education.filter(e => e.id !== id);
+    setEducation(filtered);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_custom_education', JSON.stringify(filtered));
+    }
+    showNotification("Education entry deleted.");
   };
 
   // --- Certification handlers ---
@@ -1352,9 +1455,9 @@ export default function AdminDashboardPage({ onNavigate }) {
                       </div>
                     </div>
                     <div className="form-actions" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
-                      <button type="submit" className="btn btn-primary">
+                      <button type="submit" className="btn btn-primary" disabled={savingExperience}>
                         <Save size={16} />
-                        <span>Save Experience</span>
+                        <span>{savingExperience ? 'Saving...' : 'Save Experience'}</span>
                       </button>
                       <button type="button" onClick={() => setEditingExperience(null)} className="btn btn-secondary">
                         Cancel

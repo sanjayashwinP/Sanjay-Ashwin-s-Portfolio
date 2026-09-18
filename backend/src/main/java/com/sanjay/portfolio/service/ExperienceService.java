@@ -63,7 +63,7 @@ public class ExperienceService {
         exp.setRole(dto.getRole());
         exp.setLocation(dto.getLocation());
         exp.setStartDate(dto.getStartDate());
-        exp.setEndDate(dto.getEndDate());
+        exp.setEndDate(dto.getEndDate() != null && !dto.getEndDate().isBlank() ? dto.getEndDate().trim() : "Present");
         exp.setIsCurrent(dto.getIsCurrent() != null ? dto.getIsCurrent() : false);
         exp.setDescription(dto.getDescription());
         exp.setTechnologies(dto.getTechnologies());

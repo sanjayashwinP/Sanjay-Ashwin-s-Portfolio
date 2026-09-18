@@ -35,12 +35,13 @@ public class EducationService {
 
     @Transactional
     public EducationDto createEducation(EducationDto dto) {
+        String safeEndDate = dto.getEndDate() != null && !dto.getEndDate().isBlank() ? dto.getEndDate().trim() : "Present";
         Education edu = new Education(
                 dto.getInstitution(),
                 dto.getDegree(),
                 dto.getFieldOfStudy(),
                 dto.getStartDate(),
-                dto.getEndDate(),
+                safeEndDate,
                 dto.getCgpa(),
                 dto.getLocation()
         );
@@ -57,7 +58,7 @@ public class EducationService {
         edu.setDegree(dto.getDegree());
         edu.setFieldOfStudy(dto.getFieldOfStudy());
         edu.setStartDate(dto.getStartDate());
-        edu.setEndDate(dto.getEndDate());
+        edu.setEndDate(dto.getEndDate() != null && !dto.getEndDate().isBlank() ? dto.getEndDate().trim() : "Present");
         edu.setCgpa(dto.getCgpa());
         edu.setLocation(dto.getLocation());
 

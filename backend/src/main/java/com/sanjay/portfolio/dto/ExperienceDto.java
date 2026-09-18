@@ -17,7 +17,6 @@ public class ExperienceDto {
     @NotBlank(message = "Start date is required")
     private String startDate;
 
-    @NotBlank(message = "End date is required")
     private String endDate;
 
     private Boolean isCurrent = false;

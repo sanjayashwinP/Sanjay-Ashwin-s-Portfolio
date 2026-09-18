@@ -216,12 +216,18 @@ export default function Hero({ profile }) {
             </div>
 
             <div className="hero-profile-meta">
-              <div className="hero-meta-details">
-                <div className="hero-meta-workplace">
-                  Saveetha Engineering College • <span className="font-mono">CGPA 8.4</span>
+              <div className="hero-identity-card">
+                <div className="hero-identity-badge font-mono">
+                  <span className="identity-dot"></span>
+                  <span>Java &amp; Full-Stack Engineer</span>
                 </div>
-                <div className="hero-meta-loc">
-                  Chennai, India
+                <div className="hero-workplace-line">
+                  Saveetha Engineering College
+                </div>
+                <div className="hero-stats-row font-mono">
+                  <span className="hero-stat-pill highlight-pill">CGPA 8.4</span>
+                  <span className="hero-stat-pill">B.E. CSE (2023–2027)</span>
+                  <span className="hero-stat-pill">Chennai, India</span>
                 </div>
               </div>
             </div>

@@ -258,9 +258,9 @@
 .hero-profile-row {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
+  width: 100%;
 }
 
 .hero-avatar-wrapper {
@@ -269,17 +269,18 @@
 
 .hero-avatar-frame {
   position: relative;
-  width: 110px;
-  height: 110px;
+  width: 155px;
+  height: 155px;
   border-radius: 50%;
-  padding: 3px;
-  background: var(--accent-gradient);
-  box-shadow: 0 0 25px var(--accent-glow);
-  transition: transform var(--transition-normal);
+  padding: 4px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 60%, #b45309 100%);
+  box-shadow: 0 0 35px var(--accent-glow), 0 0 15px rgba(245, 158, 11, 0.35);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .hero-avatar-frame:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
+  box-shadow: 0 0 45px var(--accent-glow), 0 0 22px rgba(249, 115, 22, 0.45);
 }
 
 .hero-avatar-img {
@@ -294,12 +295,12 @@
 
 .hero-avatar-placeholder {
   position: relative;
-  width: 110px;
-  height: 110px;
+  width: 155px;
+  height: 155px;
   border-radius: 50%;
-  padding: 3px;
-  background: var(--accent-gradient);
-  box-shadow: 0 0 25px var(--accent-glow);
+  padding: 4px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 60%, #b45309 100%);
+  box-shadow: 0 0 35px var(--accent-glow), 0 0 15px rgba(245, 158, 11, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,50 +315,81 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-mono);
-  font-size: 2.2rem;
+  font-size: 3.2rem;
   font-weight: 800;
   color: var(--accent-primary);
 }
 
-.hero-avatar-status {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--success);
-  border: 2.5px solid var(--bg-main);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.9);
-}
-
 .hero-profile-meta {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.hero-status-pill {
+.hero-identity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.1rem 1.4rem;
+  background: var(--bg-glass-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
+
+.hero-identity-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: var(--success);
-  background: var(--success-bg);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 0.25rem 0.75rem;
+  color: var(--accent-primary);
+  background: var(--accent-glow);
+  padding: 0.22rem 0.7rem;
   border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   width: fit-content;
 }
 
-.status-indicator-dot {
+.identity-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
   animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.hero-workplace-line {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.hero-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-stat-pill {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--bg-surface-elevated);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.hero-stat-pill.highlight-pill {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.3);
+  background: var(--success-bg);
+  font-weight: 700;
 }
 
 .hero-meta-details {

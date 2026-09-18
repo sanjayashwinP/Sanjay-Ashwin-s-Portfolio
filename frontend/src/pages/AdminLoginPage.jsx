@@ -9,6 +9,13 @@ export default function AdminLoginPage({ onNavigate }) {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Check if redirected due to expired session
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('sessionExpired=true')) {
+      setError('Your admin session expired. Please log in again to update server content.');
+    }
+  }, []);
+
   // Safely redirect if authenticated via useEffect (prevents React render-phase update warnings)
   useEffect(() => {
     if (isAuthenticated) {

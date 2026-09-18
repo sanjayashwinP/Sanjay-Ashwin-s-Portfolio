@@ -24,12 +24,14 @@ export async function request(endpoint, options = {}) {
       headers,
     });
 
-    // If unauthorized, clear invalid token
-    if (response.status === 401) {
-      localStorage.removeItem('portfolio_token');
-      localStorage.removeItem('portfolio_user');
-      if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
-        window.location.href = '/admin/login';
+    // If unauthorized (401) or forbidden (403) due to expired/invalid session, end session immediately
+    if (response.status === 401 || response.status === 403) {
+      if (token || endpoint.includes('/admin/')) {
+        localStorage.removeItem('portfolio_token');
+        localStorage.removeItem('portfolio_user');
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
+          window.location.href = '/admin/login?sessionExpired=true';
+        }
       }
     }
 

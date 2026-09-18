@@ -148,6 +148,46 @@ export const portfolioService = {
           }
         }
       }
+
+      // Check local storage overrides for resilient persistence
+      if (typeof window !== 'undefined') {
+        const localExp = localStorage.getItem('portfolio_custom_experience');
+        if (localExp) {
+          try {
+            const parsed = JSON.parse(localExp);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              data.experience = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local experience:", e);
+          }
+        }
+
+        const localEdu = localStorage.getItem('portfolio_custom_education');
+        if (localEdu) {
+          try {
+            const parsed = JSON.parse(localEdu);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              data.education = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local education:", e);
+          }
+        }
+
+        const localProjects = localStorage.getItem('portfolio_custom_projects');
+        if (localProjects) {
+          try {
+            const parsed = JSON.parse(localProjects);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              data.projects = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local projects:", e);
+          }
+        }
+      }
+
       return data;
     } catch (err) {
       console.warn("Using verified fallback resume data:", err.message);
@@ -156,6 +196,42 @@ export const portfolioService = {
         const localAvatar = localStorage.getItem('portfolio_avatar');
         if (localAvatar && fallbackData.profile) {
           fallbackData.profile.avatarUrl = localAvatar;
+        }
+
+        const localExp = localStorage.getItem('portfolio_custom_experience');
+        if (localExp) {
+          try {
+            const parsed = JSON.parse(localExp);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              fallbackData.experience = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local experience:", e);
+          }
+        }
+
+        const localEdu = localStorage.getItem('portfolio_custom_education');
+        if (localEdu) {
+          try {
+            const parsed = JSON.parse(localEdu);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              fallbackData.education = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local education:", e);
+          }
+        }
+
+        const localProjects = localStorage.getItem('portfolio_custom_projects');
+        if (localProjects) {
+          try {
+            const parsed = JSON.parse(localProjects);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              fallbackData.projects = parsed;
+            }
+          } catch (e) {
+            console.warn("Failed to parse local projects:", e);
+          }
         }
       }
       return fallbackData;
